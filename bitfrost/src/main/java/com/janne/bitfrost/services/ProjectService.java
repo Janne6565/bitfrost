@@ -38,6 +38,13 @@ public class ProjectService {
         if (project.getTopics().stream().map(Topic::getLabel).anyMatch(label -> label.equals(topic.getLabel()))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Topic Labels are not unique");
         }
+        project.getTopics().add(topic);
+        return projectRepository.save(project);
+    }
+
+    public Project removeTopic(String projectTag, String topic) {
+        Project project = projectRepository.findById(projectTag).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
+        project.getTopics().removeIf(t -> t.getLabel().equals(topic));
         return projectRepository.save(project);
     }
 
@@ -71,12 +78,12 @@ public class ProjectService {
         return projectRepository.findAll();
     }
 
-    public Optional<Project> getProjectById(String id) {
+    public Optional<Project> getProjectByTag(String id) {
         return projectRepository.findById(id);
     }
 
     public void deleteProject(String id) {
-        Project project =  projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
+        Project project = projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
         project.getAssignedUsers().forEach(u -> u.getAssignedProjects().remove(project));
         userRepository.saveAll(project.getAssignedUsers());
         projectRepository.delete(project);

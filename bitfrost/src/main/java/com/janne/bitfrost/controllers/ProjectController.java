@@ -38,6 +38,12 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.addTopic(projectTag, topic));
     }
 
+    @DeleteMapping("/{projectTag}/topic/{labelId}")
+    public ResponseEntity<Project> deleteTopic(@PathVariable String projectTag, @PathVariable String labelId) {
+        authService.assertUserHasProjectAccess(projectTag);
+        return ResponseEntity.ok(projectService.removeTopic(projectTag, labelId));
+    }
+
     @GetMapping("/owned")
     public ResponseEntity<List<Project>> getOwnedProjects() {
         return ResponseEntity.ok(authService.getUser().getAssignedProjects().stream().toList());
