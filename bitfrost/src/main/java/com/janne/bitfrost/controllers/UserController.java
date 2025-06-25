@@ -1,7 +1,7 @@
 package com.janne.bitfrost.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.janne.bitfrost.dtos.UserDto;
+import com.janne.bitfrost.models.UserDto;
 import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.services.JwtService;
 import com.janne.bitfrost.services.UserService;

@@ -1,6 +1,6 @@
 package com.janne.bitfrost.controllers;
 
-import com.janne.bitfrost.dtos.LoginDto;
+import com.janne.bitfrost.models.LoginDto;
 import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.services.JwtService;
 import com.janne.bitfrost.services.UserService;

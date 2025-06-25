@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -24,5 +26,12 @@ public class AuthService {
             return;
         }
         getUser().getAssignedProjects().stream().filter(project -> project.getProjectTag().equals(projectTag)).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You dont have access to that project"));
+    }
+
+    public void assertUserHasProjectAccess(String[] projects) {
+        if (getUser().getRole().equals(User.UserRole.ADMIN)) {
+            return;
+        }
+        getUser().getAssignedProjects().stream().filter(project -> Arrays.stream(projects).anyMatch(p -> p.equals(project.getProjectTag()))).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You dont have access to that project"));
     }
 }

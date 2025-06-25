@@ -1,4 +1,4 @@
-package com.janne.bitfrost.dtos;
+package com.janne.bitfrost.models;
 
 public class UserDto {
     public String uuid;
