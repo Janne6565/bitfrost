@@ -1,15 +1,20 @@
 package com.janne.bitfrost.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.apache.commons.lang3.builder.HashCodeExclude;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Builder
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -28,6 +33,15 @@ public class User {
 
     @Column
     private UserRole role;
+
+    @ManyToMany
+    @JoinTable(
+        name = "user_project",
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "uuid"),
+        inverseJoinColumns = @JoinColumn(name = "project_id", referencedColumnName = "projectTag")
+    )
+    @JsonIgnore
+    private Set<Project> assignedProjects = new HashSet<>();
 
     public enum UserRole {
         ADMIN,
