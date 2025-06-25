@@ -25,4 +25,12 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column
+    private UserRole role;
+
+    public enum UserRole {
+        ADMIN,
+        DEVELOPER
+    }
 }

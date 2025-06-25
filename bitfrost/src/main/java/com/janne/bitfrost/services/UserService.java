@@ -3,6 +3,10 @@ package com.janne.bitfrost.services;
 import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,18 +15,36 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    private String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @EventListener(ApplicationReadyEvent.class)
+    private void instantiateAdmin() {
+        String password = RandomStringUtils.randomAlphanumeric(10);
+        log.info("Created admin account with credentials [Email: {}, Password: {}]", "admin@admin.de", password);
+        createUser(User.builder()
+            .name("Admin")
+            .email("admin@admin.de")
+            .password(password)
+            .role(User.UserRole.ADMIN)
+            .build());
+    }
 
     public User createUser(User user) {
         user.setUuid(null);
         user.setPassword(hashPassword(user.getPassword()));
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
+
+        if (!user.getEmail().matches(emailRegex)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
         return userRepository.save(user);
     }

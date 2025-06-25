@@ -16,4 +16,9 @@ spring:
     password: password
 app:
   jwt:
+    identity:
+      duration: 36000000 # 10 hours
+    refresh:
+      duration: 2678400000 # 1 month
     secret: aa7b0e9187c3eec1bb5da2297b87c0ad6d8cb71188efea3c5b2d5bd189e5e397
+    private-key-path: private_key.pem
