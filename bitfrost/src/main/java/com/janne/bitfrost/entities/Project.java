@@ -1,23 +1,29 @@
 package com.janne.bitfrost.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.apache.commons.lang3.builder.HashCodeExclude;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Data
 @NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 @Builder
 public class Project {
     @Id
-    public String projectTag;
+    private String projectTag;
     @Column
-    public String description;
+    private String description;
     @OneToMany(cascade = CascadeType.ALL)
-    public List<Topic> topics;
+    private List<Topic> topics;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "assignedProjects")
+    private Set<User> assignedUsers = new HashSet<>();
 }
