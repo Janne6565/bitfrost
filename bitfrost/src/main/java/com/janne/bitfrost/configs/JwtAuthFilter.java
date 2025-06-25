@@ -2,6 +2,7 @@ package com.janne.bitfrost.configs;
 
 import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.services.JwtService;
+import com.janne.bitfrost.services.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,6 +39,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         try {
             Claims claims = jwtService.parseJwt(token, JwtService.TokenType.IDENTITY_TOKEN);
             String userId = claims.getSubject();
+            if (userService.getUser(userId).isEmpty()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             User.UserRole userRole = User.UserRole.valueOf(claims.get("role", String.class));
 
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + userRole));
