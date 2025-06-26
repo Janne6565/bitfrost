@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 public class TimeIntervalService {
 
     public int getTimeInterval(long numberOfRetries) {
-        return (int) Math.min(60, Math.pow(2, Math.min(numberOfRetries, 100))) * 1000 ;
+        return (int) Math.min(10, Math.pow(2, Math.min(numberOfRetries, 100))) * 1000 ;
     }
 }

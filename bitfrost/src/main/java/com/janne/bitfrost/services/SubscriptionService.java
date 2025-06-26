@@ -3,6 +3,7 @@ package com.janne.bitfrost.services;
 import com.janne.bitfrost.entities.Project;
 import com.janne.bitfrost.entities.Subscription;
 import com.janne.bitfrost.entities.Topic;
+import com.janne.bitfrost.repositories.JobRepository;
 import com.janne.bitfrost.repositories.ProjectRepository;
 import com.janne.bitfrost.repositories.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,15 @@ public class SubscriptionService {
 
     private final ProjectRepository projectRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final JobRepository jobRepository;
 
     public Subscription requestAccessToProject(String requestingProjectTag, String requestedProjectTag, String label, String callbackUrl) {
         Project requestingProject = projectRepository.getReferenceById(requestingProjectTag);
         Project requestedProject = projectRepository.getReferenceById(requestedProjectTag);
         Topic topic = requestedProject.getTopics().stream().filter(t -> t.getLabel().equals(label)).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
+        if (topic.getSubscriptions().stream().anyMatch(sub -> sub.getRequestingProject().equals(requestingProject))) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Subscription already exists");
+        }
         Subscription subscription = Subscription.builder()
             .requestedProject(requestedProject)
             .requestingProject(requestingProject)
@@ -53,6 +58,7 @@ public class SubscriptionService {
         Topic requestedTopic = subscription.getTopic();
         requestedTopic.getSubscriptions().remove(subscription);
         requestingProject.getSubscriptions().remove(subscription);
+        jobRepository.removeAllBySubscription(subscription);
         projectRepository.save(requestingProject);
         projectRepository.save(requestedProject);
         subscriptionRepository.delete(subscription);

@@ -3,8 +3,8 @@ package com.janne.bitfrost.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Lob;
 import lombok.*;
 
 import java.time.Instant;
@@ -17,23 +17,27 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class HttpExchangeLog {
+    @Column
     private String uri;
+    @Column
     private String method;
 
-    @Lob
+    @Column
     private String requestHeadersJson;
 
-    @Lob
+    @Column
     private String requestBody;
 
+    @Column
     private int statusCode;
 
-    @Lob
+    @Column
     private String responseHeadersJson;
 
-    @Lob
+    @Column
     private String responseBody;
 
+    @Column
     private Instant timestamp;
 
     @JsonIgnore
