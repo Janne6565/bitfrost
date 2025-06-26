@@ -14,17 +14,20 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @Builder
+@ToString
 public class Project {
     @Id
     private String projectTag;
     @Column
     private String description;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Topic> topics;
     @JsonIgnore
+    @ToString.Exclude
     @ManyToMany(mappedBy = "assignedProjects")
     private Set<User> assignedUsers = new HashSet<>();
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<AccessRequest> accessRequests = new HashSet<>();
+    @ToString.Exclude
+    @OneToMany(mappedBy = "requestingProject", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private Set<Subscription> subscriptions = new HashSet<>();
 }

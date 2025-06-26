@@ -3,11 +3,11 @@ package com.janne.bitfrost.services;
 import com.janne.bitfrost.entities.Project;
 import com.janne.bitfrost.entities.Topic;
 import com.janne.bitfrost.entities.User;
-import com.janne.bitfrost.repositories.ProjectRepository;
-import com.janne.bitfrost.repositories.UserRepository;
+import com.janne.bitfrost.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -19,6 +19,10 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
+    private final TopicRepository topicRepository;
+    private final SubscriptionService subscriptionService;
+    private final SubscriptionRepository subscriptionRepository;
 
     public Project createProject(Project project) {
         if (!project.getProjectTag().matches("[a-z\\-A-Z0-9]*")) {
@@ -31,6 +35,11 @@ public class ProjectService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Topic Labels are not unique");
         }
         return projectRepository.save(project);
+    }
+
+    public Topic getProjectTopic(String projectLabel, String topicLabel) {
+        Project project = projectRepository.findById(projectLabel).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
+        return project.getTopics().stream().filter(t -> t.getLabel().equals(topicLabel)).findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
     }
 
     public Project addTopic(String projectTag, Topic topic) {
@@ -82,10 +91,14 @@ public class ProjectService {
         return projectRepository.findById(id);
     }
 
+    @Transactional
     public void deleteProject(String id) {
         Project project = projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
         project.getAssignedUsers().forEach(u -> u.getAssignedProjects().remove(project));
         userRepository.saveAll(project.getAssignedUsers());
+        subscriptionRepository.findAllByRequestingProject(project).forEach(subscription -> subscriptionService.revokeAccessRequest(subscription.getUuid()));
+        subscriptionRepository.findAllByRequestedProject(project).forEach(subscription -> subscriptionService.revokeAccessRequest(subscription.getUuid()));
         projectRepository.delete(project);
     }
+
 }

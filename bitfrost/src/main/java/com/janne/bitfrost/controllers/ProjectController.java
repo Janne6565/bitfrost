@@ -1,5 +1,6 @@
 package com.janne.bitfrost.controllers;
 
+import com.janne.bitfrost.entities.Message;
 import com.janne.bitfrost.entities.Project;
 import com.janne.bitfrost.entities.Topic;
 import com.janne.bitfrost.services.AuthService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RestController
@@ -36,6 +38,12 @@ public class ProjectController {
     public ResponseEntity<Project> createTopic(@PathVariable String projectTag, @RequestBody Topic topic) {
         authService.assertUserHasProjectAccess(projectTag);
         return ResponseEntity.ok(projectService.addTopic(projectTag, topic));
+    }
+
+    @GetMapping("/{projectTag}/{topicLabel}/messages")
+    public ResponseEntity<Set<Message>> getTopicMessages(@PathVariable String projectTag, @PathVariable String topicLabel) {
+        authService.assertUserHasProjectAccess(projectTag);
+        return ResponseEntity.ok(projectService.getProjectTopic(projectTag, topicLabel).getMessages());
     }
 
     @DeleteMapping("/{projectTag}/topic/{labelId}")
