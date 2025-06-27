@@ -24,10 +24,10 @@ public class JobExecutorService {
 
     public Mono<HttpExchangeLog> executeJob(Job job) {
         log.info("Executing job {}", job);
-        return sendPostRequest(job.getSubscription().getCallbackUrl(), job.getMessage(), "TestAuth");
+        return sendPostRequest(job.getSubscription().getCallbackUrl(), job.getMessage().getMessage(), "TestAuth");
     }
 
-    public Mono<HttpExchangeLog> sendPostRequest(String url, Object payload, String authHeaderValue) {
+    public Mono<HttpExchangeLog> sendPostRequest(String url, String payload, String authHeaderValue) {
         return webClient.post()
             .uri(url)
             .header(HttpHeaders.AUTHORIZATION, authHeaderValue)

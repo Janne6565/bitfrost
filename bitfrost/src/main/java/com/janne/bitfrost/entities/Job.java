@@ -2,10 +2,6 @@ package com.janne.bitfrost.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.http.HttpStatusCode;
-
-import java.time.Instant;
-import java.util.Map;
 
 @Entity
 @ToString
@@ -19,8 +15,8 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
 
-    @Column
-    private String message;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Message message;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Topic topic;

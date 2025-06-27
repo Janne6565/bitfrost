@@ -1,5 +1,6 @@
 package com.janne.bitfrost.entities;
 
+import com.janne.bitfrost.models.MessageDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,4 +29,8 @@ public class Message {
 
     @Column(nullable = false)
     private LocalDateTime date;
+
+    public MessageDto toDto() {
+        return MessageDto.from(this);
+    }
 }

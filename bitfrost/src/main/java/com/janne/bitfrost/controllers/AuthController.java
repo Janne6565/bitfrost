@@ -1,7 +1,7 @@
 package com.janne.bitfrost.controllers;
 
-import com.janne.bitfrost.models.LoginDto;
 import com.janne.bitfrost.entities.User;
+import com.janne.bitfrost.models.LoginDto;
 import com.janne.bitfrost.services.JwtService;
 import com.janne.bitfrost.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private final UserService userService;
     private final JwtService jwtService;
@@ -31,7 +31,7 @@ public class AuthController {
 
     @GetMapping("/login")
     public ResponseEntity<String> getUserByLogin(@RequestBody LoginDto loginDto) {
-        User user = userService.loginUser(loginDto.email(), loginDto.password());
+        User user = userService.loginUser(loginDto.getEmail(), loginDto.getPassword());
         return ResponseEntity.ok(jwtService.generateToken(Map.of(), user.getUuid(), JwtService.TokenType.REFRESH_TOKEN, user.getRole()));
     }
 

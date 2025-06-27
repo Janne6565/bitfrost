@@ -52,14 +52,18 @@ public class JobService {
         });
     }
 
+    public Set<Job> getJobsFromMessage(Message message) {
+        return jobRepository.findAllByMessage(message);
+    }
+
     public void scheduleMessage(Message message) {
         Set<Subscription> subscriptions = message.getTopic().getSubscriptions();
         subscriptions.forEach(subscription -> {
-            scheduleJob(subscription, message.getMessage());
+            scheduleJob(subscription, message);
         });
     }
 
-    private void scheduleJob(Subscription subscription, String message) {
+    private void scheduleJob(Subscription subscription, Message message) {
         Job job = Job.builder()
             .message(message)
             .topic(subscription.getTopic())

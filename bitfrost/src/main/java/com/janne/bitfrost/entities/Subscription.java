@@ -1,7 +1,10 @@
 package com.janne.bitfrost.entities;
 
+import com.janne.bitfrost.models.SubscriptionDto;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -31,6 +34,10 @@ public class Subscription {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "requestingProject", referencedColumnName = "projectTag")
     private Project requestingProject;
+
+    public SubscriptionDto toDto() {
+        return SubscriptionDto.from(this);
+    }
 
     public enum SubscriptionState {
         REQUESTED,

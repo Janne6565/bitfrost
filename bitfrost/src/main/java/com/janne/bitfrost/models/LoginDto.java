@@ -1,5 +1,12 @@
 package com.janne.bitfrost.models;
 
 
-public record LoginDto(String email, String password) {
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class LoginDto {
+    private String email;
+    private String password;
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.janne.bitfrost.entities.Message;
 import com.janne.bitfrost.entities.Project;
 import com.janne.bitfrost.entities.Topic;
+import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.repositories.MessageRepository;
 import com.janne.bitfrost.repositories.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -55,5 +59,10 @@ public class MessagePublishingService {
 
     public List<Message> getMessagesOfTopic(String projectTag, String topicLabel) {
         return messageRepository.findAllByProjectIdAndTopicLabel(projectTag, topicLabel);
+    }
+
+    public List<Message> getAccessibleMessages(User user) {
+        Set<Topic> topics = projectService.getAllAllowedTopics(user);
+        return topics.stream().map(Topic::getMessages).flatMap(Collection::stream).collect(Collectors.toList());
     }
 }

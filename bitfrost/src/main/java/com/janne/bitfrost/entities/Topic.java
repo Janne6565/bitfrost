@@ -24,10 +24,15 @@ public class Topic {
     private String description;
     @JsonIgnore
     @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Project project;
+    @JsonIgnore
+    @ToString.Exclude
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Subscription> subscriptions = new HashSet<>();
     @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Message> messages = new HashSet<>();
+
 }
