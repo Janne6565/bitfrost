@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    default: db
   application:
     name: bitfrost
   jpa:

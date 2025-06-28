@@ -28,12 +28,16 @@ public class UserService {
     private void instantiateAdmin() {
         String password = RandomStringUtils.randomAlphanumeric(10);
         log.info("Created admin account with credentials [Email: {}, Password: {}]", "admin@admin.de", password);
-        createUser(User.builder()
-            .name("Admin")
-            .email("admin@admin.de")
-            .password(password)
-            .role(User.UserRole.ADMIN)
-            .build());
+        try {
+            createUser(User.builder()
+                .name("Admin")
+                .email("admin@admin.de")
+                .password(password)
+                .role(User.UserRole.ADMIN)
+                .build());
+        } catch (ResponseStatusException e) {
+            log.info("Admin account already instantiated");
+        }
     }
 
     public User createUser(User user) {
