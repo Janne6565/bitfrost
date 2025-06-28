@@ -1,17 +1,22 @@
 import { Box, Typography } from "@mui/joy";
 import { useNavigate, useParams } from "react-router";
-import type { Project } from "@/@types/backendTypes";
 import { ArrowBack, Settings } from "@mui/icons-material";
 import ProjectDashboard from "@/components/ProjectDashboard/ProjectDashboard.tsx";
+import { useTypedSelector } from "@/stores/rootReducer.ts";
+import { useMemo, useState } from "react";
+import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
 
 const ProjectDetailPage = () => {
-  const { projectTag } = useParams();
+  const { projectTag } = useParams() as { projectTag: string };
   const navigate = useNavigate();
-  const project: Project = {
-    description: "Demo Project",
-    projectTag: projectTag as string,
-    topics: [],
-  };
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const allProjects = useTypedSelector((state) => state.projectSlice.projects);
+  const project = useMemo(() => allProjects[projectTag], [allProjects]);
+
+  if (!project) {
+    return <NotFoundPage />;
+  }
+
   return (
     <Box
       sx={{
@@ -68,15 +73,16 @@ const ProjectDetailPage = () => {
               background: "rgba(0, 0, 0, 0.1)",
             },
           }}
+          onClick={() => setSettingsOpen((prev) => !prev)}
         >
           <Settings /> Project Settings
         </Typography>
       </Box>
       <Typography level={"h1"} sx={{ mt: 2.5, mb: 1 }}>
-        {project.projectTag}
+        {project?.projectTag}
       </Typography>
       <Typography level={"h3"} color={"neutral"} sx={{ mb: 3 }}>
-        {project.description}
+        {project?.description}
       </Typography>
       <ProjectDashboard project={project} />
     </Box>

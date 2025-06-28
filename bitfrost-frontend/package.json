@@ -18,9 +18,14 @@
     "@mui/material": "^7.1.2",
     "@mui/x-charts": "^8.5.3",
     "@mui/x-data-grid": "^8.5.3",
+    "@reduxjs/toolkit": "^2.8.2",
+    "axios": "^1.10.0",
+    "datejs": "^1.0.0-rc3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.6.2"
+    "react-redux": "^9.2.0",
+    "react-router": "^7.6.2",
+    "redux": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",

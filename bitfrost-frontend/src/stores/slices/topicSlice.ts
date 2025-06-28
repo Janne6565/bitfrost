@@ -1,27 +1,27 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Project } from "@/@types/backendTypes";
+import type { Topic } from "@/@types/backendTypes.ts";
 
-const projectSlice = createSlice({
-  name: "projects",
+const topicSlice = createSlice({
+  name: "tags",
   initialState: {
-    projects: {},
-  } as { projects: { [key: string]: Project } },
+    topics: {},
+  } as { topics: { [key: string]: Topic } },
   reducers: {
-    setProject: (state, action: PayloadAction<Project>) => {
-      state.projects[action.payload.projectTag] = action.payload;
+    setTopic: (state, action: PayloadAction<Topic>) => {
+      state.topics[action.payload.uuid] = action.payload;
     },
-    removeProject: (state, action: PayloadAction<string>) => {
-      delete state.projects[action.payload];
+    removeTopic: (state, action: PayloadAction<string>) => {
+      delete state.topics[action.payload];
     },
-    setProjects: (state, action: PayloadAction<Project[]>) => {
+    setTopics: (state, action: PayloadAction<Topic[]>) => {
       action.payload.forEach((item) => {
-        state.projects[item.projectTag] = item;
+        state.topics[item.uuid] = item;
       });
     },
   },
 });
 
-const { setProject, removeProject, setProjects } = projectSlice.actions;
+const { setTopics, removeTopic, setTopic } = topicSlice.actions;
 
-export { setProjects, setProject, removeProject };
-export default projectSlice.reducer;
+export { setTopic, setTopics, removeTopic };
+export default topicSlice.reducer;

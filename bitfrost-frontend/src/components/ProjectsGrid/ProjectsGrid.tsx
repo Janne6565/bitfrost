@@ -1,4 +1,4 @@
-import type { Project } from "@/@types/backendTypes";
+import type { Project } from "@/@types/backendTypes.ts";
 import { Box, Card, CardContent, Typography } from "@mui/joy";
 import { useNavigate } from "react-router";
 
@@ -52,9 +52,9 @@ const ProjectBox = (props: { project: Project }) => {
 
 const ProjectsGrid = (props: { projects: Project[] }) => {
   return (
-    <Box sx={{ width: "100%", display: "flex", gap: "20px" }}>
+    <Box sx={{ width: "100%", display: "flex", gap: "20px", flexWrap: "wrap" }}>
       {props.projects.map((project) => (
-        <ProjectBox project={project} />
+        <ProjectBox project={project} key={project.projectTag} />
       ))}
     </Box>
   );

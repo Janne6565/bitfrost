@@ -89,7 +89,7 @@ const Links = () => {
   return (
     <Box sx={{ display: "flex", gap: "2rem" }}>
       {links.map((link) => (
-        <CustomLink href={link.href} paths={link.paths}>
+        <CustomLink href={link.href} paths={link.paths} key={link.href}>
           {link.label}
         </CustomLink>
       ))}

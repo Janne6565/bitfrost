@@ -192,4 +192,5 @@ const PieChartCard = (props: { title: string; data: PieChartData[] }) => {
   );
 };
 
+export { formatNumber };
 export default PieChartCard;

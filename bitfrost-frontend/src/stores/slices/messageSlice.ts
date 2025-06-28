@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Message } from "@/@types/backendTypes";
+import type { Message } from "@/@types/backendTypes.ts";
 
 const messageSlice = createSlice({
   name: "jobs",

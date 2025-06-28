@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Chip, Tooltip } from "@mui/joy";
+import { Box, Card, Chip, Tooltip } from "@mui/joy";
 import { Notifications } from "@mui/icons-material";
 import { ClickAwayListener } from "@mui/material";
 
@@ -47,7 +47,7 @@ const NotificationMenu = () => {
         onClickAway={() => setIsOpen(false)}
         mouseEvent={isOpen ? "onClick" : false}
       >
-        <Box
+        <Card
           sx={{
             position: "absolute",
             top: "calc(1.5rem + 30px)",
@@ -59,13 +59,13 @@ const NotificationMenu = () => {
             border: "thin solid gray",
             p: "1rem 1.5rem",
             pointerEvents: isOpen ? "auto" : "none",
-            boxShadow: "0 0 1px 1px rgba(0,0,0,0.3)",
+            boxShadow: "0 0 1px 1px rgba(0,0,0,0.2)",
             opacity: isOpen ? 1 : 0,
             transition: "opacity 0.2s",
           }}
         >
           Test
-        </Box>
+        </Card>
       </ClickAwayListener>
     </>
   );

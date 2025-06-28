@@ -3,13 +3,14 @@ import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { areaElementClasses } from "@mui/x-charts/LineChart";
 import { Box, Card, CardContent, Typography } from "@mui/joy";
 import { useTheme } from "@mui/material";
+import { formatNumber } from "@/components/ProjectDashboard/PieChartCard/PieChartCard.tsx";
 
 export type StatCardProps = {
   title: string;
   id: string;
-  value: string;
+  value: number;
   interval: string;
-  graphColor: "error" | "success" | "warning";
+  graphColor: "error" | "success" | "warning" | "primary";
   data: number[];
 };
 
@@ -55,7 +56,9 @@ export default function StatCard({
       ? theme.palette.success.main
       : graphColor == "warning"
         ? theme.palette.warning.main
-        : theme.palette.error.main;
+        : graphColor == "primary"
+          ? theme.palette.primary.main
+          : theme.palette.error.main;
 
   return (
     <Card
@@ -85,7 +88,7 @@ export default function StatCard({
               sx={{ justifyContent: "space-between", alignItems: "center" }}
             >
               <Typography level={"h4"} component="p">
-                {value}
+                {formatNumber(value)}
               </Typography>
             </Stack>
             <Typography level={"title-sm"} sx={{ color: "text.secondary" }}>

@@ -40,6 +40,7 @@ export interface Message {
   projectTag: string;
   topicId: string;
   date: string;
+  message: string;
 }
 
 export interface PublicUser {
@@ -51,6 +52,7 @@ export interface Subscription {
   uuid: string;
   state: SubscriptionState;
   callbackUrl: string;
+  topic: string;
   requestingProjectTag: string;
   requestedProjectTag: string;
 }
@@ -69,5 +71,5 @@ export enum JobState {
 
 export enum SubscriptionState {
   REQUESTED = "REQUESTED",
-  FAILED = "FAILED",
+  APPROVED = "APPROVED",
 }
