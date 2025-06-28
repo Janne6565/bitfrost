@@ -21,7 +21,6 @@ public class Project {
     private String projectTag;
     @Column
     private String description;
-    @JsonIgnore
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Topic> topics;

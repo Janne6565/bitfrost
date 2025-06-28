@@ -14,7 +14,7 @@ public class JobDto {
     private String subscriptionId;
     private Job.JobStatus status;
     private long earliestExecution;
-    private long numberOfRetries;
+    private long retryCount;
     private HttpExchangeLog httpExchangeLog;
 
     public static JobDto from(Job job) {
@@ -25,7 +25,7 @@ public class JobDto {
             .topicId(job.getTopic().getUuid())
             .subscriptionId(job.getSubscription().getUuid())
             .earliestExecution(job.getEarliestExecution())
-            .numberOfRetries(job.getNumberOfRetries())
+            .retryCount(job.getRetryCount())
             .httpExchangeLog(job.getHttpExchangeLog())
             .build();
     }

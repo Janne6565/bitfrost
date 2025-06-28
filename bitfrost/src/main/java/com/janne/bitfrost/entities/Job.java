@@ -28,7 +28,7 @@ public class Job {
     private long earliestExecution;
 
     @Column
-    private long numberOfRetries;
+    private long retryCount;
 
     @Column
     private JobStatus status;

@@ -1,7 +1,9 @@
 package com.janne.bitfrost.controllers;
 
+import com.janne.bitfrost.entities.Project;
 import com.janne.bitfrost.entities.Subscription;
 import com.janne.bitfrost.entities.Topic;
+import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.models.SubscriptionDto;
 import com.janne.bitfrost.services.AuthService;
 import com.janne.bitfrost.services.ProjectService;
@@ -26,6 +28,20 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
     private final ProjectService projectService;
 
+    @GetMapping
+    public ResponseEntity<Set<SubscriptionDto>> getSubscriptions() {
+        User user = authService.getUser();
+        return ResponseEntity.ok(
+            (user.getRole().equals(User.UserRole.ADMIN) ? subscriptionService.getAllSubscriptions().stream() :
+                user.getAssignedProjects().stream()
+                    .map(Project::getSubscriptions)
+                    .flatMap(Collection::stream)
+            )
+                .map(Subscription::toDto)
+                .collect(Collectors.toSet())
+        );
+    }
+
     @GetMapping("/{requestingProjectTag}")
     public ResponseEntity<Set<SubscriptionDto>> getAccessRequests(@PathVariable String requestingProjectTag) {
         authService.assertUserHasProjectAccess(requestingProjectTag);
@@ -36,6 +52,7 @@ public class SubscriptionController {
 
     @GetMapping("/requesting/{projectTag}")
     public ResponseEntity<Set<SubscriptionDto>> getAccessRequestsOnProject(@PathVariable String projectTag) {
+        authService.assertUserHasProjectAccess(projectTag);
         return ResponseEntity.ok(projectService.getProjectByTag(
                     projectTag
                 ).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"))

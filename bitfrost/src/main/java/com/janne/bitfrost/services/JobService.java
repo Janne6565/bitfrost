@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,11 +42,11 @@ public class JobService {
                 job.setStatus(Job.JobStatus.FAILED);
                 jobRepository.save(Job.builder()
                     .message(job.getMessage())
-                    .numberOfRetries(job.getNumberOfRetries() + 1)
+                    .retryCount(job.getRetryCount() + 1)
                     .topic(job.getTopic())
                     .status(Job.JobStatus.WAITING)
                     .subscription(job.getSubscription())
-                    .earliestExecution(System.currentTimeMillis() + timeIntervalService.getTimeInterval(job.getNumberOfRetries() + 1))
+                    .earliestExecution(System.currentTimeMillis() + timeIntervalService.getTimeInterval(job.getRetryCount() + 1))
                     .build());
             }
             jobRepository.save(job);
@@ -57,7 +58,7 @@ public class JobService {
     }
 
     public void scheduleMessage(Message message) {
-        Set<Subscription> subscriptions = message.getTopic().getSubscriptions();
+        Set<Subscription> subscriptions = message.getTopic().getSubscriptions().stream().filter(subscription -> subscription.getState().equals(Subscription.SubscriptionState.APPROVED)).collect(Collectors.toSet());
         subscriptions.forEach(subscription -> {
             scheduleJob(subscription, message);
         });
@@ -67,7 +68,7 @@ public class JobService {
         Job job = Job.builder()
             .message(message)
             .topic(subscription.getTopic())
-            .numberOfRetries(0)
+            .retryCount(0)
             .subscription(subscription)
             .status(Job.JobStatus.WAITING)
             .earliestExecution(System.currentTimeMillis())

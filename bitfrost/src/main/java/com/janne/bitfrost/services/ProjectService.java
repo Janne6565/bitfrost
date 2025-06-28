@@ -38,7 +38,7 @@ public class ProjectService {
         if (project.getTopics().stream().map(Topic::getLabel).distinct().count() != project.getTopics().size()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Topic Labels are not unique");
         }
-        project.getTopics().stream().forEach(topic -> {
+        project.getTopics().forEach(topic -> {
             topic.setProject(project);
         });
         return projectRepository.save(project);
@@ -125,7 +125,10 @@ public class ProjectService {
         Set<Project> projects = user.getRole().equals(User.UserRole.ADMIN) ? new HashSet<>(findAll()) : user.getAssignedProjects();
         projects.forEach(p -> {
             allowedTopics.addAll(p.getTopics());
-            allowedTopics.addAll(p.getSubscriptions().stream().map(Subscription::getTopic).collect(Collectors.toSet()));
+            allowedTopics.addAll(p.getSubscriptions().stream()
+                .filter(subscription -> subscription.getState().equals(Subscription.SubscriptionState.APPROVED))
+                .map(Subscription::getTopic)
+                .collect(Collectors.toSet()));
         });
         return allowedTopics;
     }

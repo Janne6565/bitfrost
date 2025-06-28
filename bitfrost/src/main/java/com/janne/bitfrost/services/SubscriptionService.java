@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
@@ -62,5 +65,9 @@ public class SubscriptionService {
         projectRepository.save(requestingProject);
         projectRepository.save(requestedProject);
         subscriptionRepository.delete(subscription);
+    }
+
+    public Set<Subscription> getAllSubscriptions() {
+        return new HashSet<Subscription>(subscriptionRepository.findAll());
     }
 }
