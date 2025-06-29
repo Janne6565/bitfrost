@@ -12,22 +12,8 @@ export type StatCardProps = {
   interval: string;
   graphColor: "error" | "success" | "warning" | "primary";
   data: number[];
+  xAxis: string[];
 };
-
-function getDaysInMonth(month: number, year: number) {
-  const date = new Date(year, month, 0);
-  const monthName = date.toLocaleDateString("en-US", {
-    month: "short",
-  });
-  const daysInMonth = date.getDate();
-  const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
-    days.push(`${monthName} ${i}`);
-    i += 1;
-  }
-  return days;
-}
 
 function AreaGradient({ color, id }: { color: string; id: string }) {
   return (
@@ -47,8 +33,8 @@ export default function StatCard({
   interval,
   graphColor,
   data,
+  xAxis,
 }: StatCardProps) {
-  const daysInWeek = getDaysInMonth(4, 2024);
   const theme = useTheme();
 
   const chartColor =
@@ -100,12 +86,13 @@ export default function StatCard({
               color={chartColor}
               data={data}
               area
+              curve="bumpX"
               height={100}
               showHighlight
               showTooltip
               xAxis={{
                 scaleType: "band",
-                data: daysInWeek, // Use the correct property 'data' for xAxis
+                data: xAxis, // Use the correct property 'data' for xAxis
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {

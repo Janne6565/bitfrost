@@ -20,6 +20,7 @@ export interface Job {
   subscriptionId: string;
   status: JobState;
   earliestExecution: number;
+  retryTimestamps: number[];
   retryCount: number;
   httpExchangeLog: HttpExchangeLog;
 }
@@ -52,7 +53,8 @@ export interface Subscription {
   uuid: string;
   state: SubscriptionState;
   callbackUrl: string;
-  topic: string;
+  topicUuid: string;
+  topicLabel: string;
   requestingProjectTag: string;
   requestedProjectTag: string;
 }

@@ -1,4 +1,3 @@
-import StatCard from "@/components/ProjectDashboard/StatCard/StatCard.tsx";
 import { Grid } from "@mui/material";
 import PieChartCard from "./PieChartCard/PieChartCard";
 import { Box } from "@mui/joy";
@@ -8,9 +7,13 @@ import { useMemo } from "react";
 import {
   type Job,
   JobState,
+  type Message,
   type Project,
   SubscriptionState,
 } from "@/@types/backendTypes.ts";
+import FrequencyGraphCard, {
+  formatDateToGerman,
+} from "@/components/ProjectDashboard/FrequencyGraphCard/FrequencyGraphCard.tsx";
 
 function countOccurrences(array: any[]) {
   return array.reduce((acc, item) => {
@@ -19,24 +22,28 @@ function countOccurrences(array: any[]) {
   }, {});
 }
 
-function formatDateToGerman(date: Date) {
-  const pad = (num: number) => String(num).padStart(2, "0");
-
-  const day = pad(date.getDate());
-  const month = pad(date.getMonth() + 1); // Months are zero-based
-  const year = date.getFullYear();
-  const hours = pad(date.getHours());
-  const minutes = pad(date.getMinutes());
-
-  return `${day}.${month}.${year} ${hours}:${minutes}`;
+function filterPastXDays<T>(
+  data: T[],
+  getDate: (item: T) => Date,
+  range: number,
+) {
+  const minDate = new Date(Date.now());
+  minDate.setDate(minDate.getDate() - range);
+  minDate.setHours(0, 0, 0);
+  return data.filter((item) => getDate(item).getTime() > minDate.getTime());
 }
 
 const ProjectDashboard = (props: { project: Project }) => {
+  const dateRange = 7;
   const allMessages = useTypedSelector((state) => state.messageSlice.messages);
   const messages = useMemo(
     () =>
-      Object.values(allMessages).filter(
-        (message) => message.projectTag == props.project.projectTag,
+      filterPastXDays(
+        Object.values(allMessages).filter(
+          (message) => message.projectTag == props.project.projectTag,
+        ),
+        (message: Message) => new Date(Date.parse(message.date)),
+        dateRange,
       ),
     [allMessages],
   );
@@ -51,8 +58,12 @@ const ProjectDashboard = (props: { project: Project }) => {
   const allJobs = useTypedSelector((state) => state.jobSlice.jobs);
   const jobs = useMemo(
     () =>
-      Object.values(allJobs).filter((jobs) =>
-        topics.map((topic) => topic.uuid).includes(jobs.topicId),
+      filterPastXDays(
+        Object.values(allJobs).filter((jobs) =>
+          topics.map((topic) => topic.uuid).includes(jobs.topicId),
+        ),
+        (job: Job) => new Date(job.earliestExecution),
+        dateRange,
       ),
     [allJobs],
   );
@@ -69,6 +80,7 @@ const ProjectDashboard = (props: { project: Project }) => {
     });
     return result;
   }, [jobs, messages]);
+
   const allSubscriptions = useTypedSelector(
     (state) => state.subscriptionSlice.subscriptions,
   );
@@ -81,18 +93,15 @@ const ProjectDashboard = (props: { project: Project }) => {
       ),
     [allSubscriptions],
   );
-  console.log(Object.values(allSubscriptions));
   const subscriptionCounts = useMemo(
     () =>
       Object.entries(
         countOccurrences(
-          subscriptions.map((subscription) => subscription.topic),
+          subscriptions.map((subscription) => subscription.topicLabel),
         ),
-      ).map((value) => ({ label: value[0], value: value[1] })),
+      ).map((value) => ({ label: value[0], value: value[1] as number })),
     [subscriptions],
   );
-
-  console.log(subscriptionCounts);
 
   return (
     <Box
@@ -106,50 +115,30 @@ const ProjectDashboard = (props: { project: Project }) => {
     >
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 6, lg: 4 }} sx={{ height: "100%" }}>
-          <StatCard
-            title={"Messages Published"}
-            value={messages.length}
-            interval={"Last 30 days"}
-            id={"messages-send"}
-            graphColor={"success"}
-            data={[
-              200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320,
-              360, 340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480,
-              460, 600, 880, 920,
-            ]}
+          <FrequencyGraphCard
+            values={messages.map((message) => Date.parse(message.date))}
+            title={"Messages published"}
+            dateRange={dateRange}
+            graphId={"messages-published"}
+            color={"success"}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 4 }} sx={{ height: "100%" }}>
-          <StatCard
-            title={"Jobs Executed"}
-            value={
-              jobs.filter(
-                (job) =>
-                  job.status == JobState.DONE || job.status == JobState.FAILED,
-              ).length
-            }
-            interval={"Last 30 days"}
-            id={"jobs-executed"}
-            graphColor={"primary"}
-            data={[
-              200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320,
-              360, 340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480,
-              460, 600, 880, 920,
-            ]}
+          <FrequencyGraphCard
+            values={jobs.map((job) => job.earliestExecution)}
+            title={"Message Proxies"}
+            dateRange={dateRange}
+            graphId={"message-proxied"}
+            color={"primary"}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 4 }} sx={{ height: "100%" }}>
-          <StatCard
-            title={"Jobs Failed"}
-            id={"errors-received"}
-            value={jobs.filter((job) => job.status == JobState.FAILED).length}
-            interval={"Last 30 days"}
-            graphColor={"warning"}
-            data={[
-              200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320,
-              360, 340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480,
-              460, 600, 880, 920,
-            ]}
+          <FrequencyGraphCard
+            values={jobs.map((job) => job.retryTimestamps).flat()}
+            title={"Retry count"}
+            dateRange={dateRange}
+            graphId={"retry-count"}
+            color={"error"}
           />
         </Grid>
       </Grid>
@@ -158,38 +147,46 @@ const ProjectDashboard = (props: { project: Project }) => {
           <CustomizedDataGrid
             columns={[
               {
-                field: "messageContent",
-                headerName: "Message",
-                flex: 0.5,
-              },
-              {
                 field: "publishedOn",
                 headerName: "Published on",
                 flex: 0.5,
                 renderCell(value) {
                   return formatDateToGerman(
                     new Date(Date.parse(value.row.publishedOn)),
+                    false,
                   );
                 },
               },
               {
+                field: "topic",
+                headerName: "Topic",
+                flex: 0.5,
+              },
+              {
+                field: "messageContent",
+                headerName: "Message",
+                flex: 0.7,
+              },
+
+              {
                 field: "successfulJobs",
                 headerName: "Succeeded Jobs",
-                flex: 0.5,
+                flex: 0.3,
               },
               {
                 field: "failedJobs",
                 headerName: "Failed Jobs",
-                flex: 0.5,
+                flex: 0.3,
               },
               {
                 field: "pendingJobs",
                 headerName: "Pending Jobs",
-                flex: 0.5,
+                flex: 0.3,
               },
             ]}
             rows={messages.map((message) => ({
               id: message.uuid,
+              topic: allTopics[message.topicId].label,
               messageContent: message.message,
               publishedOn: message.date,
               successfulJobs: (messageJobs[message.uuid] ?? []).filter(
@@ -215,5 +212,4 @@ const ProjectDashboard = (props: { project: Project }) => {
   );
 };
 
-export { formatDateToGerman };
 export default ProjectDashboard;

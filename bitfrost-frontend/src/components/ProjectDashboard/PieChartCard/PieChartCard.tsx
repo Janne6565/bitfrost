@@ -130,7 +130,10 @@ const PieChartCard = (props: { title: string; data: PieChartData[] }) => {
             }}
             series={[
               {
-                data: props.data,
+                data:
+                  props.data.length == 0
+                    ? [{ label: "", value: 1 }]
+                    : props.data,
                 innerRadius: 75,
                 outerRadius: 100,
                 paddingAngle: 0,
@@ -148,6 +151,15 @@ const PieChartCard = (props: { title: string; data: PieChartData[] }) => {
           </PieChart>
         </Box>
         <Box>
+          {props.data.length == 0 && (
+            <Typography
+              textAlign={"center"}
+              color={"neutral"}
+              sx={{ userSelect: "none" }}
+            >
+              No Subscribers yet
+            </Typography>
+          )}
           {props.data.map((data, index) => (
             <Stack
               key={index}
