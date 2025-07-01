@@ -32,6 +32,9 @@ const useDataLoading = () => {
     dispatch(setTopics(topics ?? []));
     dispatch(setJobs(jobs ?? []));
     dispatch(setSubscriptions(subscriptions ?? []));
+    setTimeout(() => {
+      initialLoading();
+    }, 2000);
   }, [fetchProjects, fetchOwnedProjects]);
 
   return { initialLoading };

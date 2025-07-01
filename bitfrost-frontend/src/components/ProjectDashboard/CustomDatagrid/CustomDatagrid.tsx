@@ -24,6 +24,7 @@ const CustomizedDataGrid = (props: {
       }}
       pageSizeOptions={[10, 20, 50]}
       disableColumnResize
+      disableColumnSelector
       disableRowSelectionOnClick
       density="compact"
       sx={{
@@ -33,6 +34,11 @@ const CustomizedDataGrid = (props: {
         fontFamily: "'Inter', 'Helvetica', 'Arial', sans-serif",
       }}
       slotProps={{
+        cell: {
+          style: {
+            outline: "transparent 2px solid",
+          },
+        },
         row: {
           style: props.onRowClick
             ? {
