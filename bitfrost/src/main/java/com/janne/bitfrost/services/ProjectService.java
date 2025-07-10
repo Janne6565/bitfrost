@@ -4,6 +4,7 @@ import com.janne.bitfrost.entities.Project;
 import com.janne.bitfrost.entities.Subscription;
 import com.janne.bitfrost.entities.Topic;
 import com.janne.bitfrost.entities.User;
+import com.janne.bitfrost.models.ProjectDto;
 import com.janne.bitfrost.repositories.ProjectRepository;
 import com.janne.bitfrost.repositories.SubscriptionRepository;
 import com.janne.bitfrost.repositories.UserRepository;
@@ -65,9 +66,12 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public void assignUserToProject(String userUuid, String projectTag) {
-        User user = userRepository.findById(userUuid).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
+    public void assignUserToProject(String userEmail, String projectTag) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
         Project project = projectRepository.findById(projectTag).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
+        if (user.getAssignedProjects().contains(project)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User already assigned to this project");
+        }
         assignUserToProject(user, project);
     }
 
@@ -133,4 +137,9 @@ public class ProjectService {
         return allowedTopics;
     }
 
+    public Project updateProject(String projectTag, ProjectDto projectDto) {
+        Project previousProject = Optional.of(projectRepository.getReferenceById(projectTag)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
+        previousProject.setDescription(projectDto.getDescription());
+        return projectRepository.save(previousProject);
+    }
 }

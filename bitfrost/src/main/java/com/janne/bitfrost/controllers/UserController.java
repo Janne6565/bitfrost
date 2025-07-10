@@ -4,6 +4,7 @@ import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.models.PublicUserDto;
 import com.janne.bitfrost.models.UserDto;
 import com.janne.bitfrost.services.AuthService;
+import com.janne.bitfrost.services.ProjectService;
 import com.janne.bitfrost.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,6 +26,7 @@ public class UserController {
 
     private final UserService userService;
     private final AuthService authService;
+    private final ProjectService projectService;
 
     @GetMapping("/users")
     public ResponseEntity<List<PublicUserDto>> getAllUsers() {
@@ -36,6 +39,16 @@ public class UserController {
         User user = userService.getUser(uuid)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         return ResponseEntity.ok(user.getRole().equals(User.UserRole.ADMIN) ? UserDto.from(user) : PublicUserDto.from(user));
+    }
+
+    @GetMapping("/users/assigned-to/{projectTag}")
+    public ResponseEntity<Set<UserDto>> getUserAssignedToProject(@PathVariable String projectTag) {
+        authService.assertUserHasProjectAccess(projectTag);
+        return ResponseEntity.ok(
+            userService.getUserAssignedToProject(
+                projectTag
+            ).stream().map(UserDto::from).collect(Collectors.toSet())
+        );
     }
 
     @PostMapping("/admin")

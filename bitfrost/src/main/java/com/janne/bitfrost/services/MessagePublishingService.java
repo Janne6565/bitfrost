@@ -1,6 +1,5 @@
 package com.janne.bitfrost.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.janne.bitfrost.entities.Message;
 import com.janne.bitfrost.entities.Project;
 import com.janne.bitfrost.entities.Topic;
@@ -10,6 +9,7 @@ import com.janne.bitfrost.repositories.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,9 +27,10 @@ public class MessagePublishingService {
 
     private final ProjectService projectService;
     private final ProjectRepository projectRepository;
-    private final ObjectMapper objectMapper;
     private final MessageRepository messageRepository;
     private final JobService jobService;
+    @Value("${app.past-date-range}")
+    private int pastDateRange;
 
     @SneakyThrows
     public Message publishMessage(String projectTag, String topicLabel, String message) {
@@ -54,15 +55,19 @@ public class MessagePublishingService {
     }
 
     public List<Message> getMessagesOfProject(String projectTag) {
-        return messageRepository.findAllByProjectId(projectTag);
+        return messageRepository.findAllByProjectId(projectTag, LocalDateTime.now().minusDays(pastDateRange));
     }
 
     public List<Message> getMessagesOfTopic(String projectTag, String topicLabel) {
-        return messageRepository.findAllByProjectIdAndTopicLabel(projectTag, topicLabel);
+        return messageRepository.findAllByProjectIdAndTopicLabel(projectTag, topicLabel, LocalDateTime.now().minusDays(pastDateRange));
     }
 
     public List<Message> getAccessibleMessages(User user) {
         Set<Topic> topics = projectService.getAllAllowedTopics(user);
-        return topics.stream().map(Topic::getMessages).flatMap(Collection::stream).collect(Collectors.toList());
+        return topics.stream()
+            .map(Topic::getMessages)
+            .flatMap(Collection::stream)
+            .filter(message -> message.getDate().isAfter(LocalDateTime.now().minusDays(pastDateRange)))
+            .collect(Collectors.toList());
     }
 }

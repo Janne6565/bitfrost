@@ -14,6 +14,7 @@ public class ProjectDto {
     private String projectTag;
     private String description;
     private List<String> topics;
+    private boolean hasAccess;
 
     public static ProjectDto from(Project project) {
         return ProjectDto.builder()

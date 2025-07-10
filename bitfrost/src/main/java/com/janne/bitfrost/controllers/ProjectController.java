@@ -28,7 +28,8 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<Set<ProjectDto>> getProjects() {
-        return ResponseEntity.ok(projectService.findAll().stream().map(ProjectDto::from).collect(Collectors.toSet()));
+        return ResponseEntity.ok(
+            projectService.findAll().stream().map(ProjectDto::from).collect(Collectors.toSet()));
     }
 
     @GetMapping("/topics")
@@ -41,6 +42,12 @@ public class ProjectController {
         Project buildProject = projectService.createProject(project);
         projectService.assignUserToProject(authService.getUser().getUuid(), buildProject.getProjectTag());
         return ResponseEntity.ok(buildProject.toDto());
+    }
+
+    @PutMapping
+    public ResponseEntity<ProjectDto> updateProject(@RequestBody ProjectDto projectDto) {
+        authService.assertUserHasProjectAccess(projectDto.getProjectTag());
+        return ResponseEntity.accepted().body(projectService.updateProject(projectDto.getProjectTag(), projectDto).toDto());
     }
 
     @PostMapping("/{projectTag}/topic")
@@ -65,7 +72,10 @@ public class ProjectController {
         if (authService.getUser().getRole().equals(User.UserRole.ADMIN)) {
             return getProjects();
         }
-        return ResponseEntity.ok(authService.getUser().getAssignedProjects().stream().toList().stream().map(ProjectDto::from).collect(Collectors.toSet()));
+        return ResponseEntity.ok(authService.getUser().getAssignedProjects().stream().toList().stream().map(ProjectDto::from).map(projectDto -> {
+            projectDto.setHasAccess(true);
+            return projectDto;
+        }).collect(Collectors.toSet()));
     }
 
     @DeleteMapping("/{projectTag}")
@@ -76,9 +86,9 @@ public class ProjectController {
     }
 
     @PostMapping("/allow/{projectTag}")
-    public ResponseEntity<Void> allowAccess(@PathVariable String projectTag, @RequestParam String userId) {
+    public ResponseEntity<Void> allowAccess(@PathVariable String projectTag, @RequestParam String userEmail) {
         authService.assertUserHasProjectAccess(projectTag);
-        projectService.assignUserToProject(userId, projectTag);
+        projectService.assignUserToProject(userEmail, projectTag);
         return ResponseEntity.ok().build();
     }
 

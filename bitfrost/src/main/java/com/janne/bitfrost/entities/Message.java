@@ -24,6 +24,8 @@ public class Message {
     @ManyToOne(fetch = FetchType.EAGER)
     private Topic topic;
 
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column(nullable = false)
     private String message;
 

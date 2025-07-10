@@ -68,6 +68,10 @@ public class SubscriptionService {
     }
 
     public Set<Subscription> getAllSubscriptions() {
-        return new HashSet<Subscription>(subscriptionRepository.findAll());
+        return new HashSet<>(subscriptionRepository.findAll());
+    }
+
+    public Set<Subscription> getSubscriptionsRegardingProject(Project project) {
+        return new HashSet<>(subscriptionRepository.findAllByRequestingProjectOrRequestedProject(project, project));
     }
 }

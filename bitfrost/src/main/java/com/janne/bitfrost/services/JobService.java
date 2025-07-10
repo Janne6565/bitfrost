@@ -7,11 +7,12 @@ import com.janne.bitfrost.entities.Subscription;
 import com.janne.bitfrost.repositories.JobRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -25,29 +26,22 @@ public class JobService {
     private final JobExecutorService jobExecutorService;
     private final TimeIntervalService timeIntervalService;
     private final JobExecutionSuccessAnalysisService jobExecutionSuccessAnalysisService;
-
-    public List<Job> getAllJobs() {
-        return jobRepository.findAll();
-    }
+    @Value("${app.past-date-range}")
+    private int pastDateRange;
 
     @Scheduled(fixedDelay = 500, timeUnit = TimeUnit.MILLISECONDS)
     public void executeJobs() {
-        jobRepository.findAllByEarliestExecutionBeforeAndStatus(System.currentTimeMillis(), Job.JobStatus.WAITING).forEach(job -> {
+        jobRepository.findRecentJobsBeforeWithStatus(System.currentTimeMillis(), System.currentTimeMillis() - (long) pastDateRange * 24 * 60 * 60 * 1000, Job.JobStatus.WAITING).forEach(job -> {
             Mono<HttpExchangeLog> jobExecution = jobExecutorService.executeJob(job);
             HttpExchangeLog jobExecutionResult = jobExecution.block();
             job.setHttpExchangeLog(jobExecutionResult);
-            if (jobExecutionSuccessAnalysisService.checkJobSuccessful(jobExecutionResult)) {
+            if (jobExecutionResult != null && jobExecutionSuccessAnalysisService.checkJobSuccessful(jobExecutionResult)) {
                 job.setStatus(Job.JobStatus.DONE);
             } else {
-                job.setStatus(Job.JobStatus.FAILED);
-                jobRepository.save(Job.builder()
-                    .message(job.getMessage())
-                    .retryCount(job.getRetryCount() + 1)
-                    .topic(job.getTopic())
-                    .status(Job.JobStatus.WAITING)
-                    .subscription(job.getSubscription())
-                    .earliestExecution(System.currentTimeMillis() + timeIntervalService.getTimeInterval(job.getRetryCount() + 1))
-                    .build());
+                job.setStatus(Job.JobStatus.WAITING);
+                job.getRetryTimestamps().add(System.currentTimeMillis());
+                job.setEarliestExecution(System.currentTimeMillis() + timeIntervalService.getTimeInterval(job.getRetryCount() + 1));
+                job.setRetryCount(job.getRetryCount() + 1);
             }
             jobRepository.save(job);
         });
@@ -67,6 +61,7 @@ public class JobService {
     private void scheduleJob(Subscription subscription, Message message) {
         Job job = Job.builder()
             .message(message)
+            .retryTimestamps(new ArrayList<>())
             .topic(subscription.getTopic())
             .retryCount(0)
             .subscription(subscription)

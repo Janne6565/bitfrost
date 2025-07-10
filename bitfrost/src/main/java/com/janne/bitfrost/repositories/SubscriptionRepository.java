@@ -14,4 +14,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Stri
     List<Subscription> findAllByRequestedProject(Project requestedProject);
 
     List<Subscription> findAllByRequestingProject(Project requestingProject);
+
+    List<Subscription> findAllByRequestingProjectOrRequestedProject(Project requestingProject, Project requestedProject);
 }

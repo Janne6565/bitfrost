@@ -9,6 +9,8 @@ import lombok.Data;
 public class SubscriptionDto {
     private String uuid;
     private Subscription.SubscriptionState state;
+    private String topicUuid;
+    private String topicLabel;
     private String callbackUrl;
     private String requestingProjectTag;
     private String requestedProjectTag;
@@ -17,6 +19,8 @@ public class SubscriptionDto {
         return SubscriptionDto.builder()
             .uuid(subscription.getUuid())
             .state(subscription.getState())
+            .topicUuid(subscription.getTopic().getUuid())
+            .topicLabel(subscription.getTopic().getLabel())
             .callbackUrl(subscription.getCallbackUrl())
             .requestingProjectTag(subscription.getRequestingProject().getProjectTag())
             .requestedProjectTag(subscription.getRequestedProject().getProjectTag())

@@ -31,15 +31,20 @@ public class SubscriptionController {
     @GetMapping
     public ResponseEntity<Set<SubscriptionDto>> getSubscriptions() {
         User user = authService.getUser();
-        return ResponseEntity.ok(
-            (user.getRole().equals(User.UserRole.ADMIN) ? subscriptionService.getAllSubscriptions().stream() :
-                user.getAssignedProjects().stream()
-                    .map(Project::getSubscriptions)
-                    .flatMap(Collection::stream)
-            )
+        Set<SubscriptionDto> subscriptionDtos = (user.getRole().equals(User.UserRole.ADMIN) ? subscriptionService.getAllSubscriptions().stream() :
+            user.getAssignedProjects().stream()
+                .map(Project::getSubscriptions)
+                .flatMap(Collection::stream)
+        )
+            .map(Subscription::toDto).collect(Collectors.toSet());
+        subscriptionDtos.addAll(
+            user.getAssignedProjects().stream()
+                .map(subscriptionService::getSubscriptionsRegardingProject)
+                .flatMap(Collection::stream)
                 .map(Subscription::toDto)
                 .collect(Collectors.toSet())
         );
+        return ResponseEntity.ok(subscriptionDtos);
     }
 
     @GetMapping("/{requestingProjectTag}")

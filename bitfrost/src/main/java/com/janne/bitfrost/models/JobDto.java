@@ -5,6 +5,8 @@ import com.janne.bitfrost.entities.Job;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class JobDto {
@@ -12,6 +14,7 @@ public class JobDto {
     private String messageId;
     private String topicId;
     private String subscriptionId;
+    private List<Long> retryTimestamps;
     private Job.JobStatus status;
     private long earliestExecution;
     private long retryCount;
@@ -20,6 +23,7 @@ public class JobDto {
     public static JobDto from(Job job) {
         return JobDto.builder()
             .uuid(job.getUuid())
+            .retryTimestamps(job.getRetryTimestamps())
             .messageId(job.getMessage().getUuid())
             .status(job.getStatus())
             .topicId(job.getTopic().getUuid())

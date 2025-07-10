@@ -3,8 +3,7 @@ package com.janne.bitfrost.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
@@ -21,34 +20,31 @@ public class HttpExchangeLog {
     private String uri;
     @Column
     private String method;
-
     @Column
+    @Basic(fetch = FetchType.EAGER)
+    @Lob
     private String requestHeadersJson;
 
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column
     private String requestBody;
 
     @Column
     private int statusCode;
 
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column
     private String responseHeadersJson;
 
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column
     private String responseBody;
 
     @Column
     private Instant timestamp;
-
-    @JsonIgnore
-    public void setRequestHeaders(Map<String, String> headers) {
-        this.requestHeadersJson = toJson(headers);
-    }
-
-    @JsonIgnore
-    public void setResponseHeaders(Map<String, String> headers) {
-        this.responseHeadersJson = toJson(headers);
-    }
 
     private String toJson(Map<String, String> map) {
         try {
@@ -62,8 +58,18 @@ public class HttpExchangeLog {
         return fromJson(requestHeadersJson);
     }
 
+    @JsonIgnore
+    public void setRequestHeaders(Map<String, String> headers) {
+        this.requestHeadersJson = toJson(headers);
+    }
+
     public Map<String, String> getResponseHeaders() {
         return fromJson(responseHeadersJson);
+    }
+
+    @JsonIgnore
+    public void setResponseHeaders(Map<String, String> headers) {
+        this.responseHeadersJson = toJson(headers);
     }
 
     private Map<String, String> fromJson(String json) {

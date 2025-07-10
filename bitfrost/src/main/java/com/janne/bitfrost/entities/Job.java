@@ -3,6 +3,8 @@ package com.janne.bitfrost.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @ToString
 @Getter
@@ -23,6 +25,9 @@ public class Job {
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Subscription subscription;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Long> retryTimestamps;
 
     @Column
     private long earliestExecution;
