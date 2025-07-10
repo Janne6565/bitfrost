@@ -8,6 +8,7 @@ const SubscriptionGraph = (props: { project: Project }) => {
   const allSubscriptions = useTypedSelector(
     (state) => state.subscriptionSlice.subscriptions,
   );
+  const topics = useTypedSelector((state) => state.topicSlice.topics);
   const subscriptions = useMemo(
     () =>
       Object.values(allSubscriptions).filter(
@@ -17,15 +18,23 @@ const SubscriptionGraph = (props: { project: Project }) => {
       ),
     [allSubscriptions],
   );
-  const subscriptionCounts = useMemo(
-    () =>
-      Object.entries(
-        countOccurrences(
-          subscriptions.map((subscription) => subscription.topicLabel),
-        ),
-      ).map((value) => ({ label: value[0], value: value[1] as number })),
-    [subscriptions],
-  );
+  const subscriptionCounts = useMemo(() => {
+    const result = Object.entries(
+      countOccurrences(
+        subscriptions.map((subscription) => subscription.topicLabel),
+      ),
+    ).map((value) => ({ label: value[0], value: value[1] as number }));
+
+    Object.values(topics)
+      .filter((topic) => topic.project == props.project.projectTag)
+      .forEach((value) => {
+        if (result.filter((entry) => entry.label == value.label).length == 0) {
+          result.push({ label: value.label, value: 0 });
+        }
+      });
+
+    return result;
+  }, [subscriptions]);
 
   return (
     <PieChartCard title={"Subscribers per Topic"} data={subscriptionCounts} />

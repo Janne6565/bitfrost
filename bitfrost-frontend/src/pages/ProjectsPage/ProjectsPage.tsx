@@ -5,7 +5,7 @@ import { useTypedSelector } from "@/stores/rootReducer.ts";
 
 const ProjectsPage = () => {
   const projects: Project[] = Object.values(
-    useTypedSelector((state) => state.projectSlice.projects),
+    useTypedSelector((state) => state.ownedProjectSlice.ownedProjects),
   );
   return (
     <Box

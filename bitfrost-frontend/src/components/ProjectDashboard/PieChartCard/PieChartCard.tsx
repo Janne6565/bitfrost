@@ -130,10 +130,7 @@ const PieChartCard = (props: { title: string; data: PieChartData[] }) => {
             }}
             series={[
               {
-                data:
-                  props.data.length == 0
-                    ? [{ label: "", value: 1 }]
-                    : props.data,
+                data: totalValue == 0 ? [{ label: "", value: 1 }] : props.data,
                 innerRadius: 75,
                 outerRadius: 100,
                 paddingAngle: 0,
@@ -151,15 +148,6 @@ const PieChartCard = (props: { title: string; data: PieChartData[] }) => {
           </PieChart>
         </Box>
         <Box>
-          {props.data.length == 0 && (
-            <Typography
-              textAlign={"center"}
-              color={"neutral"}
-              sx={{ userSelect: "none" }}
-            >
-              No Subscribers yet
-            </Typography>
-          )}
           {props.data.map((data, index) => (
             <Stack
               key={index}
@@ -182,13 +170,15 @@ const PieChartCard = (props: { title: string; data: PieChartData[] }) => {
                     level={"body-md"}
                     sx={{ color: "text.secondary" }}
                   >
-                    {Math.round((data.value / totalValue) * 1000) / 10}%
+                    {totalValue != 0
+                      ? Math.round((data.value / totalValue) * 1000) / 10 + "%"
+                      : ""}
                   </Typography>
                 </Stack>
                 <LinearProgress
                   variant="determinate"
                   aria-label="Number of users by country"
-                  value={(data.value / totalValue) * 100}
+                  value={totalValue == 0 ? 0 : (data.value / totalValue) * 100}
                   sx={{
                     [`& .${linearProgressClasses.bar}`]: {
                       backgroundColor: getColor(index),

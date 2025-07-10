@@ -105,6 +105,7 @@ const NavBar = () => {
         position: "relative",
         left: "50%",
         transform: "translateX(-50%)",
+        zIndex: 99,
         mt: "1rem",
         padding: ".7rem 1.7rem",
         borderRadius: 20,

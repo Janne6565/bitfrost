@@ -3,12 +3,18 @@ import { Provider } from "react-redux";
 import store from "./stores";
 import AuthProvider from "@/components/AuthProvider/AuthProvider.tsx";
 import { CssVarsProvider } from "@mui/joy";
+import { SnackbarProvider } from "notistack";
 
 const App = () => {
   return (
     <Provider store={store}>
+      <CssVarsProvider />
+      <SnackbarProvider
+        style={{
+          fontFamily: "Inter, sans-serif",
+        }}
+      />
       <AuthProvider>
-        <CssVarsProvider />
         <RouterProvider />
       </AuthProvider>
     </Provider>

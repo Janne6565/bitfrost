@@ -1,18 +1,24 @@
 import { Box, Typography } from "@mui/joy";
 import { useNavigate, useParams } from "react-router";
-import { ArrowBack, Settings } from "@mui/icons-material";
+import { ArrowBack, People } from "@mui/icons-material";
 import ProjectDashboard from "@/components/ProjectDashboard/ProjectDashboard.tsx";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 import { useMemo, useState } from "react";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
+import ProjectMembersModal from "@/components/ProjectMembersModal/ProjectMembersModal.tsx";
 
 const ProjectDetailPage = () => {
   const { projectTag } = useParams() as { projectTag: string };
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const allProjects = useTypedSelector((state) => state.projectSlice.projects);
-  const project = useMemo(() => allProjects[projectTag], [allProjects]);
+  const allProjects = useTypedSelector(
+    (state) => state.ownedProjectSlice.ownedProjects,
+  );
 
+  const project = useMemo(
+    () => allProjects.filter((project) => project.projectTag == projectTag)[0],
+    [allProjects],
+  );
   if (!project) {
     return <NotFoundPage />;
   }
@@ -75,7 +81,7 @@ const ProjectDetailPage = () => {
           }}
           onClick={() => setSettingsOpen((prev) => !prev)}
         >
-          <Settings /> Project Settings
+          <People /> Project Members
         </Typography>
       </Box>
       <Typography level={"h1"} sx={{ mt: 2.5, mb: 1 }}>
@@ -85,6 +91,11 @@ const ProjectDetailPage = () => {
         {project?.description}
       </Typography>
       <ProjectDashboard project={project} />
+      <ProjectMembersModal
+        isOpen={settingsOpen}
+        setOpen={setSettingsOpen}
+        project={project}
+      />
     </Box>
   );
 };

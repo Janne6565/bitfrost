@@ -14,6 +14,7 @@ const projectSlice = createSlice({
       delete state.projects[action.payload];
     },
     setProjects: (state, action: PayloadAction<Project[]>) => {
+      state.projects = {};
       action.payload.forEach((item) => {
         state.projects[item.projectTag] = item;
       });

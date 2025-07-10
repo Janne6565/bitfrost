@@ -62,6 +62,7 @@ const NotificationMenu = () => {
             boxShadow: "0 0 1px 1px rgba(0,0,0,0.2)",
             opacity: isOpen ? 1 : 0,
             transition: "opacity 0.2s",
+            zIndex: -1,
           }}
         >
           Test

@@ -16,6 +16,8 @@ interface AuthContextType {
   logout: () => void;
   jwt: string | null;
   refreshIdentityToken: () => void;
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -26,15 +28,18 @@ const AuthContext = createContext<AuthContextType>({
     console.warn("Logout triggered before loaded");
   },
   refreshIdentityToken: () => {},
+  isLoading: false,
+  setIsLoading: () => {},
 });
 
 const DataLoader = () => {
   const { initialLoading } = useDataLoading();
-  const { authenticated } = useContext(AuthContext);
+  const { authenticated, setIsLoading } = useContext(AuthContext);
 
   useEffect(() => {
     if (authenticated) {
-      initialLoading();
+      setIsLoading(true);
+      initialLoading().then(() => setIsLoading(false));
     }
   }, [initialLoading, authenticated]);
 
@@ -45,11 +50,12 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [authenticated, setAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [jwt, setJwt] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const logout = () => {};
   const { fetchToken, login } = useApi();
 
   useEffect(() => {
-    login("jabbekeipert@gmail.com", "test1234");
+    login("jabbekeipert2@gmail.com", "test1234");
     refreshIdentityToken();
   }, []);
 
@@ -65,7 +71,15 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ jwt, user, authenticated, logout, refreshIdentityToken }}
+      value={{
+        jwt,
+        user,
+        authenticated,
+        logout,
+        refreshIdentityToken,
+        isLoading,
+        setIsLoading,
+      }}
     >
       <DataLoader />
       {children}

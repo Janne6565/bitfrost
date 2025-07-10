@@ -1,6 +1,6 @@
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 
-const CustomizedDataGrid = (props: {
+const CustomDatagrid = (props: {
   rows: any[];
   columns: GridColDef<any>[];
   onRowClick?: (column: any) => void;
@@ -75,4 +75,4 @@ const CustomizedDataGrid = (props: {
   );
 };
 
-export default CustomizedDataGrid;
+export default CustomDatagrid;

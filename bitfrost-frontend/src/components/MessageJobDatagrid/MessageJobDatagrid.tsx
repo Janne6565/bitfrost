@@ -4,11 +4,12 @@ import {
   JobState,
   type Message,
 } from "@/@types/backendTypes.ts";
-import CustomizedDataGrid from "@/components/ProjectDashboard/CustomDatagrid/CustomDatagrid.tsx";
+import CustomDatagrid from "@/components/ProjectDashboard/CustomDatagrid/CustomDatagrid.tsx";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 import { useMemo, useState } from "react";
-import { Chip, Tooltip } from "@mui/joy";
+import { Chip, Tooltip, Typography } from "@mui/joy";
 import HttpExchangeLogModal from "@/components/HttpExchangeLogModal/HttpExchangeLogModal.tsx";
+import { OpenInNew } from "@mui/icons-material";
 
 const MessageJobDatagrid = (props: { message: Message }) => {
   const jobs = useTypedSelector((state) => state.jobSlice.jobs);
@@ -27,7 +28,7 @@ const MessageJobDatagrid = (props: { message: Message }) => {
 
   return (
     <>
-      <CustomizedDataGrid
+      <CustomDatagrid
         rows={allJobs.map((job) => ({ ...job, id: job.uuid }))}
         columns={[
           {
@@ -62,6 +63,36 @@ const MessageJobDatagrid = (props: { message: Message }) => {
             field: "jobState",
           },
           {
+            headerName: "Http",
+            renderCell(row) {
+              const job = row.row as Job;
+              const isSuccess =
+                job.httpExchangeLog.statusCode >= 200 &&
+                job.httpExchangeLog.statusCode < 300;
+              return (
+                <Tooltip title={"Click to see full Request/Response content"}>
+                  <Chip
+                    color={isSuccess ? "success" : "warning"}
+                    onClick={() => {
+                      setHttpExchangeLogModalOpen(true);
+                      setHttpExchangeLogSelected(job.httpExchangeLog);
+                    }}
+                  >
+                    <Typography
+                      level={"body-md"}
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
+                      {job.httpExchangeLog.statusCode}{" "}
+                      <OpenInNew sx={{ height: "20px", pl: "2px" }} />
+                    </Typography>
+                  </Chip>
+                </Tooltip>
+              );
+            },
+            field: "httpLog",
+            flex: 2,
+          },
+          {
             headerName: "Callback URL",
             renderCell(row) {
               const job = row.row as Job;
@@ -78,30 +109,6 @@ const MessageJobDatagrid = (props: { message: Message }) => {
             },
             field: "retryCount",
             flex: 2,
-          },
-          {
-            headerName: "Http Exchange Log",
-            renderCell(row) {
-              const job = row.row as Job;
-              const isSuccess =
-                job.httpExchangeLog.statusCode >= 200 &&
-                job.httpExchangeLog.statusCode < 300;
-              return (
-                <Tooltip title={"Click to see full content"}>
-                  <Chip
-                    color={isSuccess ? "success" : "warning"}
-                    onClick={() => {
-                      setHttpExchangeLogModalOpen(true);
-                      setHttpExchangeLogSelected(job.httpExchangeLog);
-                    }}
-                  >
-                    {job.httpExchangeLog.statusCode} {"<ResponseBody>"}
-                  </Chip>
-                </Tooltip>
-              );
-            },
-            field: "httpLog",
-            flex: 3.5,
           },
         ]}
       />

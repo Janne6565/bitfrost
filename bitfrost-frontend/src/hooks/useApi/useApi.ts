@@ -106,6 +106,47 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const fetchProjectMembers = useCallback(
+    async (projectTag: string) =>
+      errorHandle(async () => {
+        return (await axiosInstance.get("/users/assigned-to/" + projectTag))
+          .data as User[];
+      }),
+    [axiosInstance],
+  );
+
+  const revokeUserAccessRights = useCallback(
+    async (projectTag: string, userId: string) =>
+      errorHandle(async () => {
+        return (
+          (
+            await axiosInstance.delete(
+              "/projects/revoke/" + projectTag + "?userId=" + userId,
+            )
+          ).status == 200
+        );
+      }),
+    [axiosInstance],
+  );
+
+  const addUserAccessRights = useCallback(
+    async (projectTag: string, userEmail: string) =>
+      errorHandle(async () => {
+        try {
+          const response = await axiosInstance.post(
+            "/projects/allow/" + projectTag + "?userEmail=" + userEmail,
+          );
+          if (response.status == 200) {
+            return "";
+          }
+        } catch (error) {
+          const errorResponse = error as { response?: { data: string } };
+          return errorResponse.response?.data;
+        }
+      }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
@@ -116,6 +157,9 @@ const useApi = () => {
     fetchOwnedProjects,
     fetchSubscriptions,
     fetchMessages,
+    fetchProjectMembers,
+    revokeUserAccessRights,
+    addUserAccessRights,
   };
 };
 

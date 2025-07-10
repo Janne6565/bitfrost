@@ -5,7 +5,7 @@ import {
   type Project,
 } from "@/@types/backendTypes.ts";
 import { formatDateToGerman } from "@/components/ProjectDashboard/FrequencyGraphCard/FrequencyGraphCard.tsx";
-import CustomizedDataGrid from "@/components/ProjectDashboard/CustomDatagrid/CustomDatagrid.tsx";
+import CustomDatagrid from "@/components/ProjectDashboard/CustomDatagrid/CustomDatagrid.tsx";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 import { useMemo } from "react";
 import { filterPastXDays } from "@/components/ProjectDashboard/ProjectDashboard.tsx";
@@ -62,7 +62,7 @@ const MessageDatagrid = (props: {
   }, [jobs, messages]);
 
   return (
-    <CustomizedDataGrid
+    <CustomDatagrid
       onRowClick={(e) =>
         props.onMessageClick
           ? props.onMessageClick(allMessages[e.row.id])

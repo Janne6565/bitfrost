@@ -53,6 +53,7 @@ export default function StatCard({
         flexGrow: 1,
         borderRadius: 15,
         overflowY: "hidden",
+        zIndex: 2,
       }}
     >
       <CardContent>
