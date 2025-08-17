@@ -1,7 +1,10 @@
 package com.janne.bitfrost.entities;
 
+import com.janne.bitfrost.models.SubscriptionDto;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Entity
 @Getter
@@ -9,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AccessRequest {
+public class Subscription {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String uuid;
@@ -17,17 +20,24 @@ public class AccessRequest {
     @Column
     private SubscriptionState state = SubscriptionState.REQUESTED;
 
+    @Column
+    private String callbackUrl;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "requested_project_id", referencedColumnName = "projectTag")
+    @JoinColumn(name = "requestedProject", referencedColumnName = "projectTag")
     private Project requestedProject;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "topic_id", referencedColumnName = "id")
+    @JoinColumn(name = "topic", referencedColumnName = "uuid")
     private Topic topic;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "requesting_project_id", referencedColumnName = "projectTag")
+    @JoinColumn(name = "requestingProject", referencedColumnName = "projectTag")
     private Project requestingProject;
+
+    public SubscriptionDto toDto() {
+        return SubscriptionDto.from(this);
+    }
 
     public enum SubscriptionState {
         REQUESTED,

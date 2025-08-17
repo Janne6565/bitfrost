@@ -1,6 +1,7 @@
 package com.janne.bitfrost.services;
 
 import com.janne.bitfrost.entities.User;
+import com.janne.bitfrost.repositories.ProjectRepository;
 import com.janne.bitfrost.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,26 +15,32 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+    private final ProjectRepository projectRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     private void instantiateAdmin() {
         String password = RandomStringUtils.randomAlphanumeric(10);
         log.info("Created admin account with credentials [Email: {}, Password: {}]", "admin@admin.de", password);
-        createUser(User.builder()
-            .name("Admin")
-            .email("admin@admin.de")
-            .password(password)
-            .role(User.UserRole.ADMIN)
-            .build());
+        try {
+            createUser(User.builder()
+                .name("Admin")
+                .email("admin@admin.de")
+                .password(password)
+                .role(User.UserRole.ADMIN)
+                .build());
+        } catch (ResponseStatusException e) {
+            log.info("Admin account already instantiated");
+        }
     }
 
     public User createUser(User user) {
@@ -47,6 +54,12 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid email");
         }
         return userRepository.save(user);
+    }
+
+    public Set<User> getUserAssignedToProject(String projectTag) {
+        return projectRepository.getProjectByProjectTag(projectTag)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"))
+            .getAssignedUsers();
     }
 
     public Optional<User> getUserByEmail(String email) {

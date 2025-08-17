@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    default: db
   application:
     name: bitfrost
   jpa:
@@ -10,11 +12,15 @@ spring:
       hibernate:
         format_sql: true
   datasource:
+    hikari:
+      auto-commit: false
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driverClassName: org.h2.Driver
     username: sa
     password: password
 app:
+  past-date-range: 7
+  max-retry-timeout: 3600
   jwt:
     identity:
       duration: 36000000 # 10 hours
