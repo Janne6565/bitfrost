@@ -66,8 +66,8 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
-    public void assignUserToProject(String userEmail, String projectTag) {
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
+    public void assignUserToProject(String UuID, String projectTag) {
+        User user = userRepository.findById(UuID).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found"));
         Project project = projectRepository.findById(projectTag).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
         if (user.getAssignedProjects().contains(project)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already assigned to this project");
