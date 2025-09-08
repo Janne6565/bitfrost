@@ -1,0 +1,66 @@
+import { useEffect, useState } from "react";
+import useApi from "@/hooks/useApi/useApi";
+import { Typography, Sheet, CircularProgress } from "@mui/joy";
+import type { Project } from "@/@types/backendTypes";
+import Box from '@mui/joy/Box';
+import ProjectCard from "./ProjectCard";
+import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
+
+
+
+// joy mui zeug internetset für typografie nowrap
+// https://mui.com/joy-ui/react-typography/#text-overflow
+// Feld mit Tag, count von topics und desc
+// mouseover zeigt komplette desc
+
+export default function ProjectCatalogue() {
+  const { fetchProjects } = useApi();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProjects = async () => {
+      const result = await fetchProjects();
+      if (Array.isArray(result)) {
+        setProjects(result);
+      } else {
+        console.warn("No Array as response");
+      }
+      setLoading(false);
+    };
+
+    loadProjects();
+  }, [fetchProjects]);
+
+
+  const OnSubscribe = () => {console.log("subscribe")}
+
+  return (
+    <Sheet>
+      <Typography level="h2" sx={{ marginTop: 2, marginBottom: 2 }}>Project Catalogue</Typography>
+
+      <Box
+    sx={{
+      width: '100%',
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+      gap: 2,
+    }}>
+      {loading ? (
+        <CustomCircularProgress size={"lg"} />
+      ) : (
+        projects.map((project) => (
+          <ProjectCard
+        key={project.projectTag}
+        project={project}
+        onSubscribe = {OnSubscribe}
+      />
+
+
+        ))
+        )}
+  </Box>
+  </Sheet>
+    
+  );
+}

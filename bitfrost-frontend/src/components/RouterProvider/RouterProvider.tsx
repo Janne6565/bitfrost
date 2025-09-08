@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import Layout from "@/components/Layout/Layout.tsx";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
 import ProjectDetailPage from "@/pages/ProjectDetailPage/ProjectDetailPage.tsx";
+import ProjectCatalogue from "@/pages/ProjectCatalogue/ProjectCatalogue";
 
 const RouterProvider = () => {
   return (
@@ -14,7 +15,11 @@ const RouterProvider = () => {
             path={"/projects/:projectTag"}
             element={<ProjectDetailPage />}
           />
-          <Route path={"/*"} element={<NotFoundPage />} />
+          <Route
+            path={"/catalogue"}
+            element={<ProjectCatalogue />}
+          />
+          {/*<Route path={"/*"} element={<NotFoundPage />} />*/}
         </Route>
       </Routes>
     </BrowserRouter>

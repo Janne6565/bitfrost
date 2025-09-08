@@ -6,7 +6,8 @@ import { AuthContext } from "@/components/AuthProvider/AuthProvider.tsx";
 import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
 
 const Layout = () => {
-  const { isLoading } = useContext(AuthContext);
+  //const { isLoading } = useContext(AuthContext);
+  const  isLoading  = false; // TODO: after Login Implementation, use above line again
   const outlet = useOutlet();
   return (
     <Sheet
@@ -36,8 +37,8 @@ const Layout = () => {
               flexGrow: 1,
               alignItems: "center",
             }}
-          >
-            <CustomCircularProgress size={"lg"} />
+          ><CustomCircularProgress size={"lg"} />
+            
           </Box>
         ) : (
           outlet
