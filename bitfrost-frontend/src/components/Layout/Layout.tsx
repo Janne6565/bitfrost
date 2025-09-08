@@ -37,8 +37,8 @@ const Layout = () => {
               flexGrow: 1,
               alignItems: "center",
             }}
-          ><CustomCircularProgress size={"lg"} />
-            
+          >
+            <CustomCircularProgress size={"lg"} />
           </Box>
         ) : (
           outlet
