@@ -7,12 +7,6 @@ import ProjectCard from "./ProjectCard";
 import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
 
 
-
-// joy mui zeug internetset für typografie nowrap
-// https://mui.com/joy-ui/react-typography/#text-overflow
-// Feld mit Tag, count von topics und desc
-// mouseover zeigt komplette desc
-
 export default function ProjectCatalogue() {
   const { fetchProjects } = useApi();
   const [projects, setProjects] = useState<Project[]>([]);

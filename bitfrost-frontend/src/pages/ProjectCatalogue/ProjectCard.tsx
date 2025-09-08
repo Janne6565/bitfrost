@@ -49,8 +49,9 @@ export default function ProjectCard({ project, onSubscribe }: ProjectCardProps) 
   <Typography level="body-sm" noWrap>
     # Topics: {project.topics.length}
   </Typography>
-  <Tooltip title={project.description} placement="bottom-start" sx={{ maxWidth: 240, // ← begrenzt die Breite
-    whiteSpace: 'normal', // ← erlaubt Zeilenumbruch
+  <Tooltip title={project.description} placement="bottom-start" 
+    sx={{ maxWidth: 240, 
+    whiteSpace: 'normal',
     wordWrap: 'break-word'}}>
   <Typography
     level="body-sm"
@@ -61,7 +62,7 @@ export default function ProjectCard({ project, onSubscribe }: ProjectCardProps) 
       overflow: "hidden",
       textOverflow: "ellipsis",
       whiteSpace: "normal",
-      cursor: "default", // optional: zeigt, dass es kein klickbares Element ist
+      cursor: "default",
     }}
   >
     {project.description}
