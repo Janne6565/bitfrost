@@ -19,7 +19,7 @@ const RouterProvider = () => {
             path={"/catalogue"}
             element={<ProjectCatalogue />}
           />
-          {/*<Route path={"/*"} element={<NotFoundPage />} />*/}
+          {<Route path={"/*"} element={<NotFoundPage />} />}
         </Route>
       </Routes>
     </BrowserRouter>

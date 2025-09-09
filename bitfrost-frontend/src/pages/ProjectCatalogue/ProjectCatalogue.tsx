@@ -27,34 +27,34 @@ export default function ProjectCatalogue() {
   }, [fetchProjects]);
 
 
-  const OnSubscribe = () => {console.log("subscribe")}
+  const OnSubscribe = () => { console.log("subscribe") }
+
+  const openDetailModal = () => { console.log("details") }
 
   return (
     <Sheet>
       <Typography level="h2" sx={{ marginTop: 2, marginBottom: 2 }}>Project Catalogue</Typography>
-
       <Box
-    sx={{
-      width: '100%',
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-      gap: 2,
-    }}>
-      {loading ? (
-        <CustomCircularProgress size={"lg"} />
-      ) : (
-        projects.map((project) => (
-          <ProjectCard
-        key={project.projectTag}
-        project={project}
-        onSubscribe = {OnSubscribe}
-      />
-
-
-        ))
+        sx={{
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gap: 2,
+        }}>
+        {loading ? (
+          <CustomCircularProgress size={"lg"} />
+        ) : (
+          projects.map((project) => (
+            <ProjectCard
+              key={project.projectTag}
+              project={project}
+              onSubscribe={OnSubscribe}
+              openDetailModal={openDetailModal}
+            />
+          ))
         )}
-  </Box>
-  </Sheet>
-    
+      </Box>
+    </Sheet>
+
   );
 }
