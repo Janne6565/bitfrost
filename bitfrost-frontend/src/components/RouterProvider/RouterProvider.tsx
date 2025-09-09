@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import Layout from "@/components/Layout/Layout.tsx";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
 import ProjectDetailPage from "@/pages/ProjectDetailPage/ProjectDetailPage.tsx";
+import SubscriptionsPage from "@/pages/SubscriptionPage/SubscriptionPage.tsx";
 
 const RouterProvider = () => {
   return (
@@ -15,6 +16,10 @@ const RouterProvider = () => {
             element={<ProjectDetailPage />}
           />
           <Route path={"/*"} element={<NotFoundPage />} />
+          <Route
+              path={"/subscription"}
+              element={<SubscriptionsPage />}
+          />
         </Route>
       </Routes>
     </BrowserRouter>
