@@ -1,9 +1,12 @@
 import { useOutlet } from "react-router";
 import { Box, Sheet } from "@mui/joy";
 import NavBar from "@/components/NavBar/NavBar.tsx";
+import { useContext } from "react";
+import { AuthContext } from "@/components/AuthProvider/AuthProvider.tsx";
 import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
 
 const Layout = () => {
+  const { isLoading } = useContext(AuthContext);
   const outlet = useOutlet();
   return (
     <Sheet
