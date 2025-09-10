@@ -43,7 +43,7 @@ const ProjectBox = (props: { project: Project }) => {
           className={"description"}
           color={"neutral"}
         >
-          Hallo test
+          {props.project.description}
         </Typography>
       </CardContent>
     </Card>
