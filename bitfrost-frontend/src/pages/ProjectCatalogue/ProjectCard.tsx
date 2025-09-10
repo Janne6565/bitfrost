@@ -30,6 +30,8 @@ export default function ProjectCard({
         justifyContent: "flex-start",
         minHeight: 100,
         p: 2,
+        transition: "all 0.4s ease-in-out, box-shadow 0.2s",
+        cursor: "pointer",
         gap: 0.5,
         "&:hover, &:focus-within": {
           transform: "scale(1.01)",
