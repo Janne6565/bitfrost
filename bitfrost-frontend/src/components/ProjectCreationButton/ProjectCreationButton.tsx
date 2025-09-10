@@ -17,7 +17,6 @@ const ProjectCreationButton = (props: { sx: ButtonProps["sx"] }) => {
       <ProjectCreationModal
         submissionCallback={async (project) => {
           await createProject(project);
-          return;
         }}
         isOpen={isCreationModalOpen}
         setOpen={setCreationModalOpen}
