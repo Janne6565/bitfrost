@@ -9,7 +9,6 @@ import {
 import type { User } from "@/@types/backendTypes.ts";
 import useApi from "@/hooks/useApi/useApi.ts";
 import useDataLoading from "@/hooks/useDataLoading/useDataLoading.tsx";
-import { Button, CssVarsProvider, FormControl, FormLabel, Input, Link, Sheet, Typography } from "@mui/joy";
 import LoginInterface from "@/components/LoginInterface/LoginInterface.tsx";
 
 interface AuthContextType {
@@ -21,8 +20,6 @@ interface AuthContextType {
   refreshIdentityToken: () => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
-  error: string | null;
-  setError: (error: string | null) => void;
   email: string;
   setEmail: (value: string) => void;
   password: string;
@@ -40,12 +37,10 @@ const AuthContext = createContext<AuthContextType>({
   refreshIdentityToken: () => {},
   isLoading: false,
   setIsLoading: () => {},
-  error: null,
-  setError: () => {},
   email: "",
   setEmail: () => {},
   password: "",
-  setPassword: () => {}
+  setPassword: () => {},
 });
 
 const DataLoader = () => {
@@ -69,7 +64,6 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const logout = () => {};
   const { fetchToken, login } = useApi();
 
@@ -99,17 +93,14 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
         refreshIdentityToken,
         isLoading,
         setIsLoading,
-        error,
-        setError,
         email,
         setEmail,
         password,
-        setPassword
+        setPassword,
       }}
     >
       <DataLoader />
-      {authenticated ? children :
-      <LoginInterface />}
+      {authenticated ? children : <LoginInterface />}
     </AuthContext.Provider>
   );
 };
