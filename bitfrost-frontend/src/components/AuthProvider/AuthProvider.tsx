@@ -67,11 +67,6 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const logout = () => {};
   const { fetchToken, login } = useApi();
 
-  useEffect(() => {
-    login("jabbekeipert2@gmail.com", "test1234");
-    refreshIdentityToken();
-  }, []);
-
   const refreshIdentityToken = useCallback(async () => {
     const token = await fetchToken();
     if (token) {
@@ -80,7 +75,9 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
     }
   }, [fetchToken]);
 
-  useEffect(() => {});
+  useEffect(() => {
+    refreshIdentityToken();
+  }, []);
 
   return (
     <AuthContext.Provider
