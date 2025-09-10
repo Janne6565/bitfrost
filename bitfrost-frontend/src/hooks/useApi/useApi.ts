@@ -147,6 +147,14 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const createProject = useCallback(
+    async (project: Project) =>
+      errorHandle(async () => {
+        return (await axiosInstance.post("/projects", project)).data as Project;
+      }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
@@ -160,6 +168,7 @@ const useApi = () => {
     fetchProjectMembers,
     revokeUserAccessRights,
     addUserAccessRights,
+    createProject,
   };
 };
 
