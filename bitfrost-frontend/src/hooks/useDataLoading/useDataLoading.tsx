@@ -19,6 +19,12 @@ const useDataLoading = () => {
     fetchSubscriptions,
   } = useApi();
 
+  const updateProjects = useCallback(async () => {
+    await fetchProjects().then((projects) => {
+      dispatch(setProjects(projects ?? []));
+    });
+  }, [dispatch, fetchProjects]);
+
   const initialLoading = useCallback(async () => {
     const projects = await fetchProjects();
     const ownedProjects = await fetchOwnedProjects();
@@ -35,9 +41,17 @@ const useDataLoading = () => {
     setTimeout(() => {
       initialLoading();
     }, 2000);
-  }, [fetchProjects, fetchOwnedProjects]);
+  }, [
+    fetchProjects,
+    fetchOwnedProjects,
+    fetchMessages,
+    fetchTopics,
+    fetchJobs,
+    fetchSubscriptions,
+    dispatch,
+  ]);
 
-  return { initialLoading };
+  return { initialLoading, updateProjects };
 };
 
 export default useDataLoading;

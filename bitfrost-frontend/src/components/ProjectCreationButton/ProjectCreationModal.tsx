@@ -10,6 +10,7 @@ import {
 } from "@mui/joy";
 import { useCallback, useState } from "react";
 import { enqueueSnackbar } from "notistack";
+import useDataLoading from "@/hooks/useDataLoading/useDataLoading.tsx";
 
 const ProjectCreationModal = (props: {
   isOpen: boolean;
@@ -18,6 +19,7 @@ const ProjectCreationModal = (props: {
 }) => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
+  const { updateProjects } = useDataLoading();
   const checkValidity = useCallback(() => {
     return (
       projectName.length > 0 &&
@@ -78,10 +80,15 @@ const ProjectCreationModal = (props: {
               topics: [],
             })
             .then(() => {
-              setLoading(false);
-              setProjectName("");
-              setProjectDescription("");
-              props.setOpen(false);
+              updateProjects().then(() => {
+                enqueueSnackbar("Project created successfully", {
+                  variant: "success",
+                });
+                props.setOpen(false);
+                setLoading(false);
+                setProjectName("");
+                setProjectDescription("");
+              });
             })
             .catch((e: Error) => {
               enqueueSnackbar(e.message, { variant: "error" });
