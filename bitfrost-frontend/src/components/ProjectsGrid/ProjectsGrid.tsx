@@ -7,8 +7,7 @@ const ProjectBox = (props: { project: Project }) => {
   return (
     <Card
       sx={{
-        minWidth: 200,
-        maxWidth: "20%",
+        width: 200,
         height: "90px",
         borderRadius: 20,
         display: "flex",
@@ -42,6 +41,7 @@ const ProjectBox = (props: { project: Project }) => {
           }}
           className={"description"}
           color={"neutral"}
+          noWrap={true}
         >
           {props.project.description}
         </Typography>
