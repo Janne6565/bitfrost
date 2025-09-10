@@ -111,6 +111,7 @@ const ProjectTopicsModal = (props: {
               await loadTopics();
               setIsDescriptionModalOpen(false);
               setNewTopicDescription("");
+              setNewTopicName("");
               enqueueSnackbar("Topic created successfully", {
                 variant: "success",
               });
