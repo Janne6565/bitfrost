@@ -3,7 +3,7 @@ import ProjectsGrid from "@/components/ProjectsGrid/ProjectsGrid.tsx";
 import type { Project } from "@/@types/backendTypes.ts";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 import ProjectCreationButton from "@/components/ProjectCreationButton/ProjectCreationButton.tsx";
-import Stack from "@mui/material/Stack";
+import Stack from "@mui/joy/Stack";
 
 const ProjectsPage = () => {
   const projects: Project[] = Object.values(
