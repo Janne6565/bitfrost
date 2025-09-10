@@ -42,7 +42,7 @@ const ProjectCreationModal = (props: {
           placeholder={"User Service"}
           onChange={(e) => setProjectName(e.target.value.trim())}
           disabled={isLoading}
-          error={projectName == "" || projectName.includes(" ")}
+          error={projectName === "" || projectName.includes(" ")}
           defaultValue={projectName}
         />
         {projectName.includes(" ") && (
