@@ -16,7 +16,7 @@ const SubscriptionGraph = (props: { project: Project }) => {
           subscription.requestedProjectTag == props.project.projectTag &&
           subscription.state == SubscriptionState.APPROVED,
       ),
-    [allSubscriptions],
+    [allSubscriptions, props.project.projectTag],
   );
   const subscriptionCounts = useMemo(() => {
     const result = Object.entries(
@@ -34,7 +34,7 @@ const SubscriptionGraph = (props: { project: Project }) => {
       });
 
     return result;
-  }, [subscriptions]);
+  }, [props.project.projectTag, subscriptions, topics]);
 
   return (
     <PieChartCard title={"Subscribers per Topic"} data={subscriptionCounts} />
