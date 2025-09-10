@@ -10,7 +10,6 @@ const useAxiosInstance = (baseUrl: string) => {
   return useMemo(() => {
     const instance = axios.create({ baseURL: baseUrl });
 
-    //const authHeader = jwt ? `Bearer ${jwt}` : null; //undo commenting after login implementation
     instance.interceptors.request.use((config) => {
       if (authHeader) {
         config.headers.Authorization = authHeader;
