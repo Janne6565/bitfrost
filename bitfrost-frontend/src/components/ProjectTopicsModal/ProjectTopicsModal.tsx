@@ -99,8 +99,8 @@ const ProjectTopicsModal = (props: {
         </FormControl>
         <Button
           disabled={
-            newTopicDescription == "" ||
-            newTopicName == "" ||
+            newTopicDescription === "" ||
+            newTopicName === "" ||
             newTopicName.includes(" ")
           }
           onClick={() => {
