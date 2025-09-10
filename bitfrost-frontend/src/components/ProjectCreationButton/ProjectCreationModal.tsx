@@ -57,13 +57,13 @@ const ProjectCreationModal = (props: {
           placeholder={
             "A service for user management, here you will find all user events, including creation, deletion, and updates."
           }
-          error={projectDescription == ""}
+          error={projectDescription === ""}
           sx={{ minHeight: "200px" }}
           onChange={(e) => setProjectDescription(e.target.value)}
           disabled={isLoading}
           defaultValue={projectDescription}
         />
-        {projectDescription == "" && (
+        {projectDescription === "" && (
           <Typography color={"danger"} level={"body-sm"}>
             The Project Description may not be empty
           </Typography>
