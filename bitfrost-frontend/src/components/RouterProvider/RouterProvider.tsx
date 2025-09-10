@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import Layout from "@/components/Layout/Layout.tsx";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
 import ProjectDetailPage from "@/pages/ProjectDetailPage/ProjectDetailPage.tsx";
-import SubscriptionsPage from "@/pages/SubscriptionPage/SubscriptionPage.tsx";
+import ProjectCatalogue from "@/pages/ProjectCatalogue/ProjectCatalogue";
 
 const RouterProvider = () => {
   return (
@@ -15,6 +15,7 @@ const RouterProvider = () => {
             path={"/projects/:projectTag"}
             element={<ProjectDetailPage />}
           />
+          <Route path={"/catalogue"} element={<ProjectCatalogue />} />
           <Route path={"/*"} element={<NotFoundPage />} />
           <Route
               path={"/subscription"}

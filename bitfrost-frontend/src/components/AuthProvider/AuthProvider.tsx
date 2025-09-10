@@ -9,19 +9,26 @@ import {
 import type { User } from "@/@types/backendTypes.ts";
 import useApi from "@/hooks/useApi/useApi.ts";
 import useDataLoading from "@/hooks/useDataLoading/useDataLoading.tsx";
+import LoginInterface from "@/components/LoginInterface/LoginInterface.tsx";
 
 interface AuthContextType {
   authenticated: boolean;
+  setAuthenticated: (value: boolean) => void;
   user: User | null;
   logout: () => void;
   jwt: string | null;
   refreshIdentityToken: () => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
+  email: string;
+  setEmail: (value: string) => void;
+  password: string;
+  setPassword: (value: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   authenticated: false,
+  setAuthenticated: () => {},
   user: null,
   jwt: null,
   logout: () => {
@@ -30,6 +37,10 @@ const AuthContext = createContext<AuthContextType>({
   refreshIdentityToken: () => {},
   isLoading: false,
   setIsLoading: () => {},
+  email: "",
+  setEmail: () => {},
+  password: "",
+  setPassword: () => {},
 });
 
 const DataLoader = () => {
@@ -51,13 +62,10 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [jwt, setJwt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const logout = () => {};
   const { fetchToken, login } = useApi();
-
-  useEffect(() => {
-    login("jabbekeipert2@gmail.com", "test1234");
-    refreshIdentityToken();
-  }, []);
 
   const refreshIdentityToken = useCallback(async () => {
     const token = await fetchToken();
@@ -67,7 +75,9 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
     }
   }, [fetchToken]);
 
-  useEffect(() => {});
+  useEffect(() => {
+    refreshIdentityToken();
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -75,14 +85,19 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
         jwt,
         user,
         authenticated,
+        setAuthenticated,
         logout,
         refreshIdentityToken,
         isLoading,
         setIsLoading,
+        email,
+        setEmail,
+        password,
+        setPassword,
       }}
     >
       <DataLoader />
-      {children}
+      {authenticated ? children : <LoginInterface />}
     </AuthContext.Provider>
   );
 };

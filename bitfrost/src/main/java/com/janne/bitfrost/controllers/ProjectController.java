@@ -88,7 +88,7 @@ public class ProjectController {
     @PostMapping("/allow/{projectTag}")
     public ResponseEntity<Void> allowAccess(@PathVariable String projectTag, @RequestParam String userEmail) {
         authService.assertUserHasProjectAccess(projectTag);
-        projectService.assignUserToProject(userEmail, projectTag);
+        projectService.assignUserToProjectByEmail(userEmail, projectTag);
         return ResponseEntity.ok().build();
     }
 
