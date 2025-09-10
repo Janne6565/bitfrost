@@ -99,8 +99,8 @@ const ProjectTopicsModal = (props: {
         </FormControl>
         <Button
           disabled={
-            newTopicDescription == "" ||
-            newTopicName == "" ||
+            newTopicDescription === "" ||
+            newTopicName === "" ||
             newTopicName.includes(" ")
           }
           onClick={() => {
@@ -111,6 +111,7 @@ const ProjectTopicsModal = (props: {
               await loadTopics();
               setIsDescriptionModalOpen(false);
               setNewTopicDescription("");
+              setNewTopicName("");
               enqueueSnackbar("Topic created successfully", {
                 variant: "success",
               });

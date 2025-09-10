@@ -55,14 +55,19 @@ const TopicsDatagrid = (props: { topics: Topic[] }) => {
                         "Are you sure you want to delete that Topic?",
                       );
                       if (isApproved) {
-                        deleteTopic(topic.project, topic.label).then(
-                          async () => {
+                        deleteTopic(topic.project, topic.label)
+                          .then(async () => {
                             await loadTopics();
                             enqueueSnackbar("Successfully deleted topic", {
                               variant: "success",
                             });
-                          },
-                        );
+                          })
+                          .catch((error) => {
+                            enqueueSnackbar(
+                              "Failed to delete topic. Please try again.",
+                              { variant: "error" }
+                            );
+                          });
                       }
                     }}
                   />
