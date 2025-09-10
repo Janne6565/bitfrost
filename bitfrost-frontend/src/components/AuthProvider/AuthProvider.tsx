@@ -65,7 +65,7 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const logout = () => {};
-  const { fetchToken, login } = useApi();
+  const { fetchToken } = useApi();
 
   const refreshIdentityToken = useCallback(async () => {
     const token = await fetchToken();

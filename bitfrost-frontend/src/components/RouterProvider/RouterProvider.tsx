@@ -4,6 +4,7 @@ import Layout from "@/components/Layout/Layout.tsx";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
 import ProjectDetailPage from "@/pages/ProjectDetailPage/ProjectDetailPage.tsx";
 import ProjectCatalogue from "@/pages/ProjectCatalogue/ProjectCatalogue";
+import SubscriptionsPage from "@/pages/SubscriptionPage/SubscriptionPage.tsx";
 
 const RouterProvider = () => {
   return (
@@ -17,10 +18,7 @@ const RouterProvider = () => {
           />
           <Route path={"/catalogue"} element={<ProjectCatalogue />} />
           <Route path={"/*"} element={<NotFoundPage />} />
-          <Route
-              path={"/subscription"}
-              element={<SubscriptionsPage />}
-          />
+          <Route path={"/subscription"} element={<SubscriptionsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
