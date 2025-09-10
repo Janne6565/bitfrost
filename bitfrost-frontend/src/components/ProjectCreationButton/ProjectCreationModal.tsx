@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/joy";
 import { useCallback, useState } from "react";
+import { enqueueSnackbar } from "notistack";
 
 const ProjectCreationModal = (props: {
   isOpen: boolean;
@@ -40,6 +41,7 @@ const ProjectCreationModal = (props: {
           onChange={(e) => setProjectName(e.target.value.trim())}
           disabled={isLoading}
           error={projectName == "" || projectName.includes(" ")}
+          defaultValue={projectName}
         />
         {projectName.includes(" ") && (
           <Typography color={"danger"} level={"body-sm"}>
@@ -57,6 +59,7 @@ const ProjectCreationModal = (props: {
           sx={{ minHeight: "200px" }}
           onChange={(e) => setProjectDescription(e.target.value)}
           disabled={isLoading}
+          defaultValue={projectDescription}
         />
         {projectDescription == "" && (
           <Typography color={"danger"} level={"body-sm"}>
@@ -79,6 +82,10 @@ const ProjectCreationModal = (props: {
               setProjectName("");
               setProjectDescription("");
               props.setOpen(false);
+            })
+            .catch((e: Error) => {
+              enqueueSnackbar(e.message, { variant: "error" });
+              setLoading(false);
             });
         }}
       >
