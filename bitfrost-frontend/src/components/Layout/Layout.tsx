@@ -6,8 +6,7 @@ import { AuthContext } from "@/components/AuthProvider/AuthProvider.tsx";
 import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
 
 const Layout = () => {
-  //const { isLoading } = useContext(AuthContext);
-  const  isLoading  = false; // TODO: after Login Implementation, use above line again
+  const { isLoading } = useContext(AuthContext);
   const outlet = useOutlet();
   return (
     <Sheet
