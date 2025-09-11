@@ -15,11 +15,11 @@ type SubscriptionCardProps = {
     onApprove?: (uuid: string) => void;
 };
 
-export default function SubscriptionCard({
-                                             subscription,
-                                             onDelete,
-                                             onApprove,
-                                         }: SubscriptionCardProps) {
+const SubscriptionCard = ({
+                              subscription,
+                              onDelete,
+                              onApprove,
+                          }: SubscriptionCardProps) => {
     const isRequested = subscription.state === SubscriptionState.REQUESTED;
     const [openDetails, setOpenDetails] = useState(false);
     const [openApprove, setOpenApprove] = useState(false);
@@ -156,4 +156,6 @@ export default function SubscriptionCard({
             />
         </>
     );
-}
+};
+
+export default SubscriptionCard;
