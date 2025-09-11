@@ -4,7 +4,7 @@ import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import type { Subscription } from "@/@types/backendTypes";
 import { SubscriptionState } from "@/@types/backendTypes";
-import DetailPage from "./DetailPage";
+import SubscriptionDetailModal from "./SubscriptionDetailModal.tsx";
 import StatusChip from "./StatusChip";
 
 type SubscriptionCardProps = {
@@ -20,6 +20,8 @@ export default function SubscriptionCard({
                                          }: SubscriptionCardProps) {
     const isRequested = subscription.state === SubscriptionState.REQUESTED;
     const [openDetails, setOpenDetails] = useState(false);
+
+    const titleText = `${subscription.requestingProjectTag} → ${subscription.requestedProjectTag}`;
 
     return (
         <>
@@ -39,10 +41,21 @@ export default function SubscriptionCard({
                     },
                 }}
             >
-                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <Typography level="h4" sx={{ wordBreak: "break-word", pr: 1 }}>
-                        {subscription.requestingProjectTag} → {subscription.requestedProjectTag}
-                    </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+                    <Tooltip title={titleText}>
+                        <Typography
+                            level="h4"
+                            noWrap
+                            sx={{
+                                flex: 1,
+                                minWidth: 0,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                            }}
+                        >
+                            {titleText}
+                        </Typography>
+                    </Tooltip>
 
                     <Tooltip title="Show Details" placement="top">
                         <IconButton
@@ -50,7 +63,7 @@ export default function SubscriptionCard({
                             size="sm"
                             aria-label="Show Details"
                             onClick={() => setOpenDetails(true)}
-                            sx={{ borderRadius: "50%", minWidth: 28, minHeight: 28, fontWeight: 600 }}
+                            sx={{ borderRadius: "50%", minWidth: 28, minHeight: 28, fontWeight: 600, flexShrink: 0 }}
                         >
                             i
                         </IconButton>
@@ -62,12 +75,29 @@ export default function SubscriptionCard({
                     <StatusChip state={subscription.state} />
                 </Box>
 
-                <Typography level="body-sm" sx={{ mt: 0.25 }}>
-                    Requested Tag:{" "}
-                    <Typography component="span" level="body-sm" sx={{ fontFamily: "monospace" }}>
-                        {subscription.requestedProjectTag}
+                <Tooltip title={subscription.requestedProjectTag}>
+                    <Typography
+                        level="body-sm"
+                        noWrap
+                        sx={{
+                            mt: 0.25,
+                            display: "block",
+                            maxWidth: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }}
+                    >
+                        Requested Tag:{" "}
+                        <Typography
+                            component="span"
+                            level="body-sm"
+                            noWrap
+                            sx={{ fontFamily: "monospace" }}
+                        >
+                            {subscription.requestedProjectTag}
+                        </Typography>
                     </Typography>
-                </Typography>
+                </Tooltip>
 
                 <Box sx={{ flexGrow: 1 }} />
 
@@ -104,8 +134,12 @@ export default function SubscriptionCard({
                     </Tooltip>
                 </Box>
             </Card>
-            
-            <DetailPage open={openDetails} onClose={() => setOpenDetails(false)} subscription={subscription} />
+
+            <SubscriptionDetailModal
+                open={openDetails}
+                onClose={() => setOpenDetails(false)}
+                subscription={subscription}
+            />
         </>
     );
 }

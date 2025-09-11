@@ -2,7 +2,7 @@ import { Sheet, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress";
 import SubscriptionCard from "./SubscriptionCard";
-import useSubscriptionsList from "./UseSubscriptionList.tsx";
+import useSubscriptionsList from "./useSubscriptionList.tsx";
 
 const SubscriptionsPage = () => {
   const { subs, loading, approve, remove } = useSubscriptionsList();
