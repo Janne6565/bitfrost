@@ -2,8 +2,6 @@ name: Backend CI
 
 on:
   push:
-    paths:
-      - "bitfrost/**"
   workflow_dispatch:
 
 jobs:
@@ -11,17 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./bitfrost
+        working-directory: bitfrost
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5
+
+      - name: Debug show files
+        run: |
+          ls -la
+          pwd
 
       - name: Build & Publish Docker image
         id: build
         uses: Agile-Software-Engineering-25/build-and-publish-image@v1.0.0
         with:
           extra_tags: ${{ github.sha }}
+          file: /home/runner/work/bitfrost/bitfrost/bitfrost/Dockerfile
 
       - name: Deploy to Namespace
         uses: Agile-Software-Engineering-25/deploy-to-k8s@v1.0.1

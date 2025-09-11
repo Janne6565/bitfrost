@@ -2,8 +2,6 @@ name: Backend Tests
 
 on:
   push:
-    paths:
-      - "bitfrost/**"
 
 permissions:
   contents: read
@@ -22,7 +20,7 @@ jobs:
         java: ["21", "22"]
     defaults:
       run:
-        working-directory: ./bitfrost
+        working-directory: bitfrost
 
     steps:
       - name: Checkout repository
