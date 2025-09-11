@@ -4,7 +4,9 @@ import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import type { Subscription } from "@/@types/backendTypes";
 import { SubscriptionState } from "@/@types/backendTypes";
-import SubscriptionDetailModal from "./SubscriptionDetailModal.tsx";
+import SubscriptionDetailModal from "./SubscriptionDetailModal";
+import SubscriptionApproveModal from "./SubscriptionApproveModal";
+import SubscriptionDeleteModal from "./SubscriptionDeleteModal";
 import StatusChip from "./StatusChip";
 
 type SubscriptionCardProps = {
@@ -20,6 +22,8 @@ export default function SubscriptionCard({
                                          }: SubscriptionCardProps) {
     const isRequested = subscription.state === SubscriptionState.REQUESTED;
     const [openDetails, setOpenDetails] = useState(false);
+    const [openApprove, setOpenApprove] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
 
     const titleText = `${subscription.requestingProjectTag} → ${subscription.requestedProjectTag}`;
 
@@ -46,12 +50,7 @@ export default function SubscriptionCard({
                         <Typography
                             level="h4"
                             noWrap
-                            sx={{
-                                flex: 1,
-                                minWidth: 0,
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                            }}
+                            sx={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis" }}
                         >
                             {titleText}
                         </Typography>
@@ -88,19 +87,13 @@ export default function SubscriptionCard({
                         }}
                     >
                         Requested Tag:{" "}
-                        <Typography
-                            component="span"
-                            level="body-sm"
-                            noWrap
-                            sx={{ fontFamily: "monospace" }}
-                        >
+                        <Typography component="span" level="body-sm" noWrap sx={{ fontFamily: "monospace" }}>
                             {subscription.requestedProjectTag}
                         </Typography>
                     </Typography>
                 </Tooltip>
 
                 <Box sx={{ flexGrow: 1 }} />
-
                 <Divider />
 
                 <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, pt: 1 }}>
@@ -111,7 +104,7 @@ export default function SubscriptionCard({
                                 variant="soft"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    onApprove && onApprove(subscription.uuid);
+                                    setOpenApprove(true);
                                 }}
                             >
                                 Approve
@@ -126,7 +119,7 @@ export default function SubscriptionCard({
                             sx={{ minWidth: 32, px: 1.5, fontSize: "0.75rem", borderRadius: "md" }}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onDelete && onDelete(subscription.uuid);
+                                setOpenDelete(true);
                             }}
                         >
                             ✕
@@ -135,9 +128,30 @@ export default function SubscriptionCard({
                 </Box>
             </Card>
 
+            {/* Modals */}
             <SubscriptionDetailModal
                 open={openDetails}
                 onClose={() => setOpenDetails(false)}
+                subscription={subscription}
+            />
+
+            <SubscriptionApproveModal
+                open={openApprove}
+                onClose={() => setOpenApprove(false)}
+                onConfirm={() => {
+                    onApprove && onApprove(subscription.uuid);
+                    setOpenApprove(false);
+                }}
+                subscription={subscription}
+            />
+
+            <SubscriptionDeleteModal
+                open={openDelete}
+                onClose={() => setOpenDelete(false)}
+                onConfirm={() => {
+                    onDelete && onDelete(subscription.uuid);
+                    setOpenDelete(false);
+                }}
                 subscription={subscription}
             />
         </>
