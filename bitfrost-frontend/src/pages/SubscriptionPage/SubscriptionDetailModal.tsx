@@ -7,6 +7,7 @@ import {
     Divider,
     Typography,
     Button,
+    Tooltip,
 } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import type { Subscription } from "@/@types/backendTypes";
@@ -19,7 +20,9 @@ type DetailPageProps = {
     subscription: Subscription;
 };
 
-export default function DetailPage({ open, onClose, subscription }: DetailPageProps) {
+export default function SubscriptionDetailModal({ open, onClose, subscription }: DetailPageProps) {
+    const titleText = `${subscription.requestingProjectTag} → ${subscription.requestedProjectTag}`;
+
     return (
         <Modal open={open} onClose={onClose}>
             <ModalDialog layout="center" size="md" sx={{ gap: 1 }}>
@@ -27,9 +30,15 @@ export default function DetailPage({ open, onClose, subscription }: DetailPagePr
                 <DialogTitle>Subscription Details</DialogTitle>
                 <DialogContent>
                     <Box sx={{ display: "grid", gap: 1 }}>
-                        <Typography level="title-md" sx={{ wordBreak: "break-word" }}>
-                            {subscription.requestingProjectTag} → {subscription.requestedProjectTag}
-                        </Typography>
+                        <Tooltip title={titleText}>
+                            <Typography
+                                level="title-md"
+                                noWrap
+                                sx={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis" }}
+                            >
+                                {titleText}
+                            </Typography>
+                        </Tooltip>
 
                         <Divider />
 
@@ -57,9 +66,22 @@ export default function DetailPage({ open, onClose, subscription }: DetailPagePr
                         </DetailRow>
 
                         <DetailRow label="Requested Tag">
-                            <Typography component="span" level="body-sm" sx={{ fontFamily: "monospace" }}>
-                                {subscription.requestedProjectTag}
-                            </Typography>
+                            <Tooltip title={subscription.requestedProjectTag}>
+                                <Typography
+                                    component="span"
+                                    level="body-sm"
+                                    noWrap
+                                    sx={{
+                                        fontFamily: "monospace",
+                                        display: "block",
+                                        maxWidth: "100%",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                    }}
+                                >
+                                    {subscription.requestedProjectTag}
+                                </Typography>
+                            </Tooltip>
                         </DetailRow>
 
                         <DetailRow label="Subscription ID">
