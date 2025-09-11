@@ -150,9 +150,7 @@ const useApi = () => {
   const createProject = useCallback(
     async (project: Project) => {
       return (
-        await axiosInstance.post("/projects", project).catch(() => {
-          throw new Error("Project already exists");
-        })
+        await axiosInstance.post("/projects", project)
       ).data as Project;
     },
     [axiosInstance],
