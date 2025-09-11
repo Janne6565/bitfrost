@@ -13,7 +13,7 @@ export default function ProjectCatalogue() {
 
   useEffect(() => {
     const loadProjects = async () => {
-      const result = await fetchProjects();
+      const result = await loadProjects();
       if (Array.isArray(result)) {
         setProjects(result);
       } else {

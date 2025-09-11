@@ -63,7 +63,7 @@ const useApi = () => {
     [axiosInstance],
   );
 
-  const fetchProjects = useCallback(
+  const loadProjects = useCallback(
     async () =>
       errorHandle(async () => {
         return (await axiosInstance.get("/projects")).data as Project[];
@@ -177,12 +177,21 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const createProject = useCallback(
+    (project: Project) => {
+      return errorHandle(async () => {
+        return (await axiosInstance.post("/projects", project)).data as Project;
+      });
+    },
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
     fetchToken,
     fetchJobs,
-    fetchProjects,
+    fetchProjects: loadProjects,
     fetchTopics,
     fetchOwnedProjects,
     fetchSubscriptions,
@@ -192,6 +201,7 @@ const useApi = () => {
     addUserAccessRights,
     createNewTopic,
     deleteTopic,
+    createProject,
   };
 };
 
