@@ -1,23 +1,55 @@
-import { Box, Typography } from "@mui/joy";
+import { Box, Typography, type TypographyProps } from "@mui/joy";
 import { useNavigate, useParams } from "react-router";
-import { ArrowBack, People } from "@mui/icons-material";
+import { ArrowBack, People, Style } from "@mui/icons-material";
 import ProjectDashboard from "@/components/ProjectDashboard/ProjectDashboard.tsx";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
-import { useMemo, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
 import ProjectMembersModal from "@/components/ProjectMembersModal/ProjectMembersModal.tsx";
+import Stack from "@mui/material/Stack";
+import ProjectTopicsModal from "@/components/ProjectTopicsModal/ProjectTopicsModal.tsx";
+
+const ButtonDesign = (props: {
+  children: ReactNode;
+  onClick: () => void;
+  sx?: TypographyProps["sx"];
+  color?: TypographyProps["color"];
+}) => (
+  <Typography
+    color={props.color}
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      borderRadius: 10,
+      padding: ".4rem .6rem",
+      border: "1px solid rgba(0, 0, 0, 0.55)",
+      cursor: "pointer",
+      transition: "background ease .3s",
+      userSelect: "none",
+      ":active": {
+        background: "rgba(0, 0, 0, 0.1)",
+      },
+      ...props.sx,
+    }}
+    onClick={() => props.onClick()}
+  >
+    {props.children}
+  </Typography>
+);
 
 const ProjectDetailPage = () => {
   const { projectTag } = useParams() as { projectTag: string };
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [topicsOpen, setTopicsOpen] = useState(false);
   const allProjects = useTypedSelector(
     (state) => state.ownedProjectSlice.ownedProjects,
   );
 
   const project = useMemo(
     () => allProjects.filter((project) => project.projectTag == projectTag)[0],
-    [allProjects],
+    [allProjects, projectTag],
   );
   if (!project) {
     return <NotFoundPage />;
@@ -37,52 +69,28 @@ const ProjectDetailPage = () => {
         sx={{
           mt: 3.5,
           display: "flex",
+          justifyContent: "space-between",
         }}
       >
-        <Typography
+        <ButtonDesign
+          onClick={() => navigate("/")}
           color={"neutral"}
           sx={{
-            display: "flex",
-            width: "fit-content",
-            padding: ".4rem .5rem",
-            borderRadius: 10,
-            alignItems: "center",
-            gap: "8px",
-            cursor: "pointer",
-            userSelect: "none",
-            transition: "background ease .3s",
-            ":hover": {
-              background: "rgba(0, 0, 0, 0.1)",
-            },
-            ":active": {
-              background: "rgba(0, 0, 0, 0.15)",
-            },
+            border: "none",
+            ":hover": { background: "rgba(0, 0, 0, 0.1)" },
+            ":active": { background: "rgba(0, 0, 0, 0.15)" },
           }}
-          onClick={() => navigate("/")}
         >
           <ArrowBack /> Back to Projects
-        </Typography>
-
-        <Typography
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            borderRadius: 10,
-            padding: ".4rem .6rem",
-            border: "1px solid rgba(0, 0, 0, 0.55)",
-            ml: "auto",
-            cursor: "pointer",
-            transition: "background ease .3s",
-            userSelect: "none",
-            ":active": {
-              background: "rgba(0, 0, 0, 0.1)",
-            },
-          }}
-          onClick={() => setSettingsOpen((prev) => !prev)}
-        >
-          <People /> Project Members
-        </Typography>
+        </ButtonDesign>
+        <Stack direction={"row"} gap={"15px"}>
+          <ButtonDesign onClick={() => setTopicsOpen((prev) => !prev)}>
+            <Style /> Project Topics
+          </ButtonDesign>
+          <ButtonDesign onClick={() => setSettingsOpen((prev) => !prev)}>
+            <People /> Project Members
+          </ButtonDesign>
+        </Stack>
       </Box>
       <Typography level={"h1"} sx={{ mt: 2.5, mb: 1 }}>
         {project?.projectTag}
@@ -94,6 +102,11 @@ const ProjectDetailPage = () => {
       <ProjectMembersModal
         isOpen={settingsOpen}
         setOpen={setSettingsOpen}
+        project={project}
+      />
+      <ProjectTopicsModal
+        isOpen={topicsOpen}
+        setOpen={setTopicsOpen}
         project={project}
       />
     </Box>

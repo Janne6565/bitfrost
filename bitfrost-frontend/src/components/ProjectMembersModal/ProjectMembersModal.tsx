@@ -1,10 +1,10 @@
 import GenericModal from "@/components/GenericModal/GenericModal.tsx";
 import type { Project, User } from "@/@types/backendTypes.ts";
-import { FormLabel } from "@mui/joy";
 import { useCallback, useEffect, useState } from "react";
 import useApi from "@/hooks/useApi/useApi.ts";
-import MemberDatagrid from "@/components/ProjectMembersModal/MemberDatagrid.tsx";
 import AddUserInputField from "./AddUserInputField";
+import { FormLabel } from "@mui/joy";
+import MemberDatagrid from "@/components/ProjectMembersModal/MemberDatagrid.tsx";
 
 const ProjectMembersModal = (props: {
   isOpen: boolean;

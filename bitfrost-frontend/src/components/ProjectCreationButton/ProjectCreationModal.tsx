@@ -19,7 +19,7 @@ const ProjectCreationModal = (props: {
 }) => {
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
-  const { updateProjects } = useDataLoading();
+  const { loadProjects, loadOwnedProjects } = useDataLoading();
   const checkValidity = useCallback(() => {
     return (
       projectName.length > 0 &&
@@ -28,6 +28,9 @@ const ProjectCreationModal = (props: {
     );
   }, [projectName, projectDescription]);
   const [isLoading, setLoading] = useState(false);
+  const PROJECT_NAME_REGEX = /^[a-zA-Z0-9\-]*$/;
+  const isProjectNameValid =
+    PROJECT_NAME_REGEX.test(projectName) && projectName.length > 0;
 
   return (
     <GenericModal
@@ -42,12 +45,16 @@ const ProjectCreationModal = (props: {
           placeholder={"User Service"}
           onChange={(e) => setProjectName(e.target.value.trim())}
           disabled={isLoading}
-          error={projectName === "" || projectName.includes(" ")}
+          error={!isProjectNameValid}
           defaultValue={projectName}
         />
-        {projectName.includes(" ") && (
-          <Typography color={"danger"} level={"body-sm"}>
-            The project name may not contain spaces
+        {!isProjectNameValid ? (
+          <Typography color={"danger"} level={"body-xs"} sx={{ mt: 0.5 }}>
+            The project name must only contain letters, numbers, or hyphens.
+          </Typography>
+        ) : (
+          <Typography color={"neutral"} level={"body-xs"} sx={{ mt: 0.5 }}>
+            Allowed: letters, numbers, hyphens. No spaces or special characters.
           </Typography>
         )}
       </FormControl>
@@ -64,11 +71,12 @@ const ProjectCreationModal = (props: {
           defaultValue={projectDescription}
         />
         {projectDescription === "" && (
-          <Typography color={"danger"} level={"body-sm"}>
+          <Typography color={"danger"} level={"body-xs"} sx={{ mt: 0.5 }}>
             The Project Description may not be empty
           </Typography>
         )}
       </FormControl>
+
       <Button
         disabled={!checkValidity() || isLoading}
         onClick={() => {
@@ -80,18 +88,19 @@ const ProjectCreationModal = (props: {
               topics: [],
             })
             .then(() => {
-              updateProjects().then(() => {
-                enqueueSnackbar("Project created successfully", {
-                  variant: "success",
+              loadProjects().then(() => {
+                loadOwnedProjects().then(() => {
+                  enqueueSnackbar("Project created successfully", {
+                    variant: "success",
+                  });
+                  props.setOpen(false);
+                  setLoading(false);
+                  setProjectName("");
+                  setProjectDescription("");
                 });
-                props.setOpen(false);
-                setLoading(false);
-                setProjectName("");
-                setProjectDescription("");
               });
             })
-            .catch((e: Error) => {
-              enqueueSnackbar(e.message, { variant: "error" });
+            .catch(() => {
               setLoading(false);
             });
         }}
