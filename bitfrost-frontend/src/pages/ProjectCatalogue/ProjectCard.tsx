@@ -19,7 +19,7 @@ export default function ProjectCard({
       variant="outlined"
       key={project.projectTag}
       size="lg"
-      onClick={(e) => {
+      onClick={() => {
         const sel = window.getSelection();
         if (sel && sel.toString().length > 0) return;
         openDetailModal(project);

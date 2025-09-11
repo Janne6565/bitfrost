@@ -62,10 +62,10 @@ const TopicsDatagrid = (props: { topics: Topic[] }) => {
                               variant: "success",
                             });
                           })
-                          .catch((error) => {
+                          .catch(() => {
                             enqueueSnackbar(
                               "Failed to delete topic. Please try again.",
-                              { variant: "error" }
+                              { variant: "error" },
                             );
                           });
                       }
