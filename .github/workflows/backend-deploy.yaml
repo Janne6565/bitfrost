@@ -1,14 +1,18 @@
-name: deploy-to-k8s
+name: Backend CI
 
 on:
   push:
-    branches:
-      - "**"
+    paths:
+      - "bitfrost/**"
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./bitfrost
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v5

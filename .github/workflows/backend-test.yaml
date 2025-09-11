@@ -1,13 +1,9 @@
-name: CI - Test
+name: Backend Tests
 
 on:
   push:
-    branches:
-      - '**'
-  pull_request:
-    branches:
-      - '**'
-  workflow_dispatch:
+    paths:
+      - "bitfrost/**"
 
 permissions:
   contents: read
@@ -23,7 +19,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        java: [ '21', '22' ]
+        java: ["21", "22"]
+    defaults:
+      run:
+        working-directory: ./bitfrost
 
     steps:
       - name: Checkout repository
