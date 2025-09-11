@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bitfrost-ingress
+  namespace: ase-12
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure # send traffic over HTTPS
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: bitfrost.sau-portal.de
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: bitfrost-service
+                port:
+                  number: 80
