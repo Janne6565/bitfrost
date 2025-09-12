@@ -35,10 +35,10 @@ export default function ProjectCatalogue() {
           gap: 2,
         }}
       >
-        {Object.entries(projects).map((project) => (
+        {Object.values(projects).map((project) => (
           <ProjectCard
-            key={project[1].projectTag}
-            project={project[1]}
+            key={project.projectTag}
+            project={project}
             onSubscribe={onSubscribe}
             openDetailModal={openDetailModal}
           />

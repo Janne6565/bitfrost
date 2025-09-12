@@ -18,11 +18,10 @@ const links = [
   },
   {
     label: "Subscription",
-    href: "/subscription",
-    paths: ["/subscription/*"],
-  }
+    href: "/subscriptions",
+    paths: ["/subscriptions/*"],
+  },
 ];
-
 
 const CustomLink = (props: {
   children: React.ReactNode;
