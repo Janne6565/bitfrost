@@ -19,6 +19,10 @@ spring:
 app:
   past-date-range: 7
   max-retry-timeout: 3600
+  cors:
+    allowed-origins:
+      - http://localhost:5173
+      - https://bitfrost.sau-portal.de
   jwt:
     identity:
       duration: 36000000 # 10 hours

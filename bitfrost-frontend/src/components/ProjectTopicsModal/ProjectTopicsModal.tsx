@@ -26,7 +26,7 @@ const ProjectTopicsModal = (props: {
   const [newTopicDescription, setNewTopicDescription] = useState("");
   const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
   const { createNewTopic } = useApi();
-  const { loadTopics } = useDataLoading();
+  const { loadTopics, loadProjects, loadOwnedProjects } = useDataLoading();
   const topics = useTypedSelector((state) => state.topicSlice.topics);
   const filteredTopics = useMemo(() => {
     return Object.values(topics).filter(
@@ -109,6 +109,8 @@ const ProjectTopicsModal = (props: {
               description: newTopicDescription,
             }).then(async () => {
               await loadTopics();
+              await loadProjects();
+              await loadOwnedProjects();
               setIsDescriptionModalOpen(false);
               setNewTopicDescription("");
               setNewTopicName("");
