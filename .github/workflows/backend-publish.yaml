@@ -2,8 +2,10 @@ name: Publish Backend Docker Image
 
 on:
   push:
+    paths: ["bitfrost-backend/**"]
     branches:
       - main
+
   workflow_dispatch:
 
 jobs:
