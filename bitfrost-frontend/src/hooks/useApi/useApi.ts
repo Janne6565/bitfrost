@@ -63,7 +63,7 @@ const useApi = () => {
     [axiosInstance],
   );
 
-  const loadProjects = useCallback(
+  const fetchProjects = useCallback(
     async () =>
       errorHandle(async () => {
         return (await axiosInstance.get("/projects")).data as Project[];
@@ -186,12 +186,30 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const approveSubscription = useCallback(
+      async (uuid: string) =>
+          errorHandle(async () => {
+              const res = await axiosInstance.post(`/project-requests/approve/${uuid}`);
+              return res.status == 200;
+          }),
+      [axiosInstance],
+  );
+
+  const deleteSubscription = useCallback(
+      async (uuid: string) =>
+          errorHandle(async () => {
+              const res = await axiosInstance.delete(`/project-requests/${uuid}`);
+              return res.status == 200;
+          }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
     fetchToken,
     fetchJobs,
-    fetchProjects: loadProjects,
+    fetchProjects,
     fetchTopics,
     fetchOwnedProjects,
     fetchSubscriptions,
@@ -202,6 +220,8 @@ const useApi = () => {
     createNewTopic,
     deleteTopic,
     createProject,
+    approveSubscription,
+    deleteSubscription,
   };
 };
 

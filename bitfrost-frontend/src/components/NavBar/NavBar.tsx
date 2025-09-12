@@ -16,6 +16,11 @@ const links = [
     href: "/catalogue",
     paths: ["/catalogue/*"],
   },
+  {
+    label: "Subscription",
+    href: "/subscriptions",
+    paths: ["/subscriptions/*"],
+  },
 ];
 
 const CustomLink = (props: {
