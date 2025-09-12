@@ -25,7 +25,7 @@ const ProjectsPage = () => {
         alignItems={"center"}
         justifyContent={"space-between"}
       >
-        <Typography level={"h1"} sx={{ mt: 5, mb: 3 }}>
+        <Typography level={"h1"} sx={{ my: 3 }}>
           Your Projects
         </Typography>
         <ProjectCreationButton sx={{ height: "50px" }} />

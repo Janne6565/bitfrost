@@ -1,22 +1,39 @@
-import { Sheet, Typography } from "@mui/joy";
+import { Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
-import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress";
 import SubscriptionCard from "./SubscriptionCard";
 import useSubscriptionsList from "./useSubscriptionList.tsx";
 
 const SubscriptionsPage = () => {
-  const { subs, loading, approve, remove } = useSubscriptionsList();
+  const { subs, approve, remove } = useSubscriptionsList();
 
   return (
-    <Sheet>
-      <Typography level="h2" sx={{ mt: 2, mb: 2 }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100%",
+        flexGrow: 1,
+        px: "3rem",
+        flexDirection: "column",
+      }}
+    >
+      <Typography level={"h1"} sx={{ mt: 3, mb: 3 }}>
         Subscriptions
       </Typography>
 
-      {loading ? (
-        <CustomCircularProgress size="lg" />
-      ) : subs.length === 0 ? (
-        <Typography>No subscriptions found.</Typography>
+      {subs.length === 0 ? (
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            pb: "10rem",
+          }}
+        >
+          <Typography color={"neutral"} level={"h3"}>
+            No subscriptions
+          </Typography>
+        </Box>
       ) : (
         <Box
           sx={{
@@ -36,7 +53,7 @@ const SubscriptionsPage = () => {
           ))}
         </Box>
       )}
-    </Sheet>
+    </Box>
   );
 };
 

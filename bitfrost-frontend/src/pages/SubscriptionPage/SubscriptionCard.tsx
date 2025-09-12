@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Divider, IconButton, Tooltip, Typography } from "@mui/joy";
+import { useMemo, useState } from "react";
+import { Button, Divider, Tooltip, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import type { Subscription } from "@/@types/backendTypes";
@@ -8,6 +8,7 @@ import SubscriptionDetailModal from "./SubscriptionDetailModal";
 import SubscriptionApproveModal from "./SubscriptionApproveModal";
 import SubscriptionDeleteModal from "./SubscriptionDeleteModal";
 import StatusChip from "./StatusChip";
+import { useTypedSelector } from "@/stores/rootReducer.ts";
 
 type SubscriptionCardProps = {
   subscription: Subscription;
@@ -21,11 +22,49 @@ const SubscriptionCard = ({
   onApprove,
 }: SubscriptionCardProps) => {
   const isRequested = subscription.state === SubscriptionState.REQUESTED;
+  const ownedProjects = useTypedSelector(
+    (state) => state.ownedProjectSlice.ownedProjects,
+  );
   const [openDetails, setOpenDetails] = useState(false);
   const [openApprove, setOpenApprove] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const ownsRequestedProject = useMemo(() => {
+    return ownedProjects.some(
+      (project) => project.projectTag === subscription.requestedProjectTag,
+    );
+  }, [ownedProjects, subscription.requestedProjectTag]);
 
-  const titleText = `${subscription.requestingProjectTag} → ${subscription.requestedProjectTag}`;
+  const ownsRequestingProject = useMemo(() => {
+    return ownedProjects.some(
+      (project) => project.projectTag === subscription.requestingProjectTag,
+    );
+  }, [ownedProjects, subscription.requestingProjectTag]);
+
+  const titleText = (
+    <>
+      <Tooltip
+        title={
+          subscription.requestingProjectTag +
+          (ownsRequestingProject ? " (Your Project)" : "")
+        }
+      >
+        <Typography color={ownsRequestingProject ? "primary" : undefined}>
+          {subscription.requestingProjectTag}
+        </Typography>
+      </Tooltip>{" "}
+      →{" "}
+      <Tooltip
+        title={
+          subscription.requestedProjectTag +
+          (ownsRequestedProject ? " (Your Project)" : "")
+        }
+      >
+        <Typography color={ownsRequestedProject ? "primary" : undefined}>
+          {subscription.requestedProjectTag}
+        </Typography>
+      </Tooltip>
+    </>
+  );
 
   return (
     <>
@@ -37,6 +76,8 @@ const SubscriptionCard = ({
           flexDirection: "column",
           minHeight: 140,
           p: 2,
+          transition: "all 0.4s ease-in-out, box-shadow 0.2s",
+          cursor: "pointer",
           gap: 1,
           "&:hover": {
             boxShadow: "md",
@@ -45,6 +86,7 @@ const SubscriptionCard = ({
           },
           pb: "8px",
         }}
+        onClick={() => setOpenDetails(true)}
       >
         <Box
           sx={{
@@ -54,38 +96,18 @@ const SubscriptionCard = ({
             gap: 1,
           }}
         >
-          <Tooltip title={titleText}>
-            <Typography
-              level="h4"
-              noWrap
-              sx={{
-                flex: 1,
-                minWidth: 0,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {titleText}
-            </Typography>
-          </Tooltip>
-
-          <Tooltip title="Show Details" placement="top">
-            <IconButton
-              variant="plain"
-              size="sm"
-              aria-label="Show Details"
-              onClick={() => setOpenDetails(true)}
-              sx={{
-                borderRadius: "50%",
-                minWidth: 28,
-                minHeight: 28,
-                fontWeight: 600,
-                flexShrink: 0,
-              }}
-            >
-              i
-            </IconButton>
-          </Tooltip>
+          <Typography
+            level="h4"
+            noWrap
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {titleText}
+          </Typography>
         </Box>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.25 }}>
@@ -120,21 +142,34 @@ const SubscriptionCard = ({
         <Box sx={{ flexGrow: 1 }} />
         <Divider />
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-          {isRequested && (
-            <Tooltip title="Approve subscription" placement="top">
-              <Button
-                size="sm"
-                variant="soft"
-                color="success"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenApprove(true);
-                }}
-              >
-                Approve
-              </Button>
-            </Tooltip>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: 1,
+            alignItems: "center",
+          }}
+        >
+          {ownsRequestedProject ? (
+            isRequested && (
+              <Tooltip title="Approve subscription" placement="top">
+                <Button
+                  size="sm"
+                  variant="soft"
+                  color="success"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenApprove(true);
+                  }}
+                >
+                  Approve
+                </Button>
+              </Tooltip>
+            )
+          ) : (
+            <Typography level={"body-sm"} color={"neutral"} sx={{ pr: 1 }}>
+              Waiting for Approval
+            </Typography>
           )}
           <Tooltip title="Delete subscription" placement="top">
             <Button
