@@ -2,6 +2,9 @@ name: Publish Frontend Docker Image
 
 on:
   push:
+    path: "bitfrost-frontend/**"
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
