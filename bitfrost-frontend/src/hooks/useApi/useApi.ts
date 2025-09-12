@@ -1,5 +1,4 @@
 import useAxiosInstance from "@/hooks/useAxiosInstance/useAxiosInstance.tsx";
-import config from "../../../app.config.json";
 import type {
   Job,
   Message,
@@ -9,16 +8,23 @@ import type {
   User,
 } from "@/@types/backendTypes.ts";
 import { useCallback } from "react";
+import { enqueueSnackbar } from "notistack";
+import { API_BASE_URL } from "@/config.ts";
 
 const useApi = () => {
-  const axiosInstance = useAxiosInstance(config.backendBaseUrl);
+  const axiosInstance = useAxiosInstance(API_BASE_URL);
   const errorHandle = async <T>(
     callback: () => Promise<T>,
   ): Promise<T | undefined> => {
     try {
       return await callback();
     } catch (error) {
-      console.warn("Error while API call:", error);
+      const usableError = error as { response?: { data: string } };
+      enqueueSnackbar(usableError.response?.data ?? "Unknown error", {
+        variant: "error",
+      });
+      console.warn("Error while API call:", usableError);
+      throw new Error(usableError.response?.data ?? "Unknown error");
     }
   };
 
@@ -147,6 +153,39 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const createNewTopic = useCallback(
+    (projectTag: string, topic: { label: string; description: string }) => {
+      return errorHandle(async () => {
+        return (
+          await axiosInstance.post("/projects/" + projectTag + "/topic", topic)
+        ).data as Topic;
+      });
+    },
+    [axiosInstance],
+  );
+
+  const deleteTopic = useCallback(
+    (projectTag: string, topicLabel: string) => {
+      return errorHandle(async () => {
+        return (
+          await axiosInstance.delete(
+            "/projects/" + projectTag + "/topic/" + topicLabel,
+          )
+        ).data as Topic;
+      });
+    },
+    [axiosInstance],
+  );
+
+  const createProject = useCallback(
+    (project: Project) => {
+      return errorHandle(async () => {
+        return (await axiosInstance.post("/projects", project)).data as Project;
+      });
+    },
+    [axiosInstance],
+  );
+
   const approveSubscription = useCallback(
       async (uuid: string) =>
           errorHandle(async () => {
@@ -178,6 +217,9 @@ const useApi = () => {
     fetchProjectMembers,
     revokeUserAccessRights,
     addUserAccessRights,
+    createNewTopic,
+    deleteTopic,
+    createProject,
     approveSubscription,
     deleteSubscription,
   };

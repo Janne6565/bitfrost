@@ -7,8 +7,7 @@ const ProjectBox = (props: { project: Project }) => {
   return (
     <Card
       sx={{
-        minWidth: 200,
-        maxWidth: "20%",
+        width: 200,
         height: "90px",
         borderRadius: 20,
         display: "flex",
@@ -42,8 +41,9 @@ const ProjectBox = (props: { project: Project }) => {
           }}
           className={"description"}
           color={"neutral"}
+          noWrap={true}
         >
-          Hallo test
+          {props.project.description}
         </Typography>
       </CardContent>
     </Card>
@@ -53,9 +53,15 @@ const ProjectBox = (props: { project: Project }) => {
 const ProjectsGrid = (props: { projects: Project[] }) => {
   return (
     <Box sx={{ width: "100%", display: "flex", gap: "20px", flexWrap: "wrap" }}>
-      {props.projects.map((project) => (
-        <ProjectBox project={project} key={project.projectTag} />
-      ))}
+      {props.projects
+        .sort((project1, project2) =>
+          project1.projectTag.toLowerCase() > project2.projectTag.toLowerCase()
+            ? 1
+            : -1,
+        )
+        .map((project) => (
+          <ProjectBox project={project} key={project.projectTag} />
+        ))}
     </Box>
   );
 };

@@ -19,7 +19,7 @@ export default function ProjectCard({
       variant="outlined"
       key={project.projectTag}
       size="lg"
-      onClick={(e) => {
+      onClick={() => {
         const sel = window.getSelection();
         if (sel && sel.toString().length > 0) return;
         openDetailModal(project);
@@ -30,6 +30,8 @@ export default function ProjectCard({
         justifyContent: "flex-start",
         minHeight: 100,
         p: 2,
+        transition: "all 0.4s ease-in-out, box-shadow 0.2s",
+        cursor: "pointer",
         gap: 0.5,
         "&:hover, &:focus-within": {
           transform: "scale(1.01)",

@@ -19,25 +19,43 @@ const useDataLoading = () => {
     fetchSubscriptions,
   } = useApi();
 
-  const initialLoading = useCallback(async () => {
-    const projects = await fetchProjects();
-    const ownedProjects = await fetchOwnedProjects();
-    const messages = await fetchMessages();
+  const loadProjects = useCallback(async () => {
+    await fetchProjects().then((projects) => {
+      dispatch(setProjects(projects ?? []));
+    });
+  }, [dispatch, fetchProjects]);
+
+  const loadTopics = useCallback(async () => {
     const topics = await fetchTopics();
+    dispatch(setTopics(topics ?? []));
+  }, [fetchTopics, dispatch]);
+
+  const loadOwnedProjects = useCallback(async () => {
+    const ownedProjects = await fetchOwnedProjects();
+    dispatch(setOwnedProjects(ownedProjects ?? []));
+  }, [fetchOwnedProjects, dispatch]);
+
+  const initialLoading = useCallback(async () => {
+    const messages = await fetchMessages();
     const jobs = await fetchJobs();
     const subscriptions = await fetchSubscriptions();
-    dispatch(setProjects(projects ?? []));
-    dispatch(setOwnedProjects(ownedProjects ?? []));
     dispatch(setMessages(messages ?? []));
-    dispatch(setTopics(topics ?? []));
     dispatch(setJobs(jobs ?? []));
     dispatch(setSubscriptions(subscriptions ?? []));
-    setTimeout(() => {
-      initialLoading();
-    }, 2000);
-  }, [fetchProjects, fetchOwnedProjects]);
+    await loadTopics();
+    await loadProjects();
+    await loadOwnedProjects();
+  }, [
+    loadProjects,
+    fetchMessages,
+    fetchJobs,
+    fetchSubscriptions,
+    dispatch,
+    loadTopics,
+    loadOwnedProjects,
+  ]);
 
-  return { initialLoading };
+  return { initialLoading, loadProjects, loadTopics, loadOwnedProjects };
 };
 
 export default useDataLoading;

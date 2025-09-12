@@ -12,7 +12,7 @@ import { useCallback, useMemo, useState } from "react";
 import { enqueueSnackbar } from "notistack";
 
 const AddUserInputField = (props: {
-  callback: (email: string) => Promise<string>;
+  callback: (email: string) => Promise<string | undefined>;
 }) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);

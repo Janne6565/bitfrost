@@ -9,7 +9,7 @@ import java.util.Random;
 @RestController
 public class RootController {
 
-    @GetMapping
+    @GetMapping("/api")
     public ResponseEntity<String> statusCheck() {
         String[] bitfrostMotd = {
             "Heimdall is ready to hear your requests.",

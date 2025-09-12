@@ -59,7 +59,7 @@ const DataLoader = () => {
 
 const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [authenticated, setAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user] = useState<User | null>(null);
   const [jwt, setJwt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("");
