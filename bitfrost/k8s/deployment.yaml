@@ -40,14 +40,15 @@ spec:
               containerPort: 8080
           env:
             # Enable graceful shutdown at app level (align with terminationGracePeriodSeconds)
-            - name: SERVER_SERVLET_CONTEXT_PATH
-              value: "/api"
             - name: SERVER_SHUTDOWN
-              value: "graceful"
+              value: graceful
+            - name: APP_JWT_PRIVATE-KEY-PATH
+              value: /private/private_key.pem
 
+          
           readinessProbe:
             httpGet:
-              path: /api/actuator/health/readiness
+              path: /actuator/health/readiness
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 5
@@ -55,7 +56,7 @@ spec:
             timeoutSeconds: 1
           livenessProbe:
             httpGet:
-              path: /api/actuator/health/liveness
+              path: /actuator/health/liveness
               port: 8080
             initialDelaySeconds: 20
             periodSeconds: 10
@@ -63,7 +64,7 @@ spec:
             timeoutSeconds: 1
           startupProbe:
             httpGet:
-              path: /api/actuator/health
+              path: /actuator/health
               port: 8080
             periodSeconds: 5
             failureThreshold: 30
@@ -80,16 +81,27 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true # Immutable root FS → mount /tmp as writable
             capabilities:
-              drop: ["ALL"]
+              drop: [ "ALL" ]
 
           volumeMounts:
             - name: data
               mountPath: /app/data
             - name: tmp
               mountPath: /tmp
+            - mountPath: /private/private_key.pem
+              name: bitfrost-private-key
+              readOnly: true
+              subPath: private_key.pem
 
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir: { }
         - name: data
-          emptyDir: {}
+          emptyDir: { }
+        - name: bitfrost-private-key
+          secret:
+            defaultMode: 420
+            items:
+              - key: private_key.pem
+                path: private_key.pem
+            secretName: bitfrost-private-key
