@@ -9,6 +9,7 @@ import type {
   User,
 } from "@/@types/backendTypes.ts";
 import { useCallback } from "react";
+import { enqueueSnackbar } from "notistack";
 
 const useApi = () => {
   const axiosInstance = useAxiosInstance(config.backendBaseUrl);
@@ -18,7 +19,12 @@ const useApi = () => {
     try {
       return await callback();
     } catch (error) {
-      console.warn("Error while API call:", error);
+      const usableError = error as { response?: { data: string } };
+      enqueueSnackbar(usableError.response?.data ?? "Unknown error", {
+        variant: "error",
+      });
+      console.warn("Error while API call:", usableError);
+      throw new Error(usableError.response?.data ?? "Unknown error");
     }
   };
 
@@ -57,7 +63,7 @@ const useApi = () => {
     [axiosInstance],
   );
 
-  const fetchProjects = useCallback(
+  const loadProjects = useCallback(
     async () =>
       errorHandle(async () => {
         return (await axiosInstance.get("/projects")).data as Project[];
@@ -147,12 +153,45 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const createNewTopic = useCallback(
+    (projectTag: string, topic: { label: string; description: string }) => {
+      return errorHandle(async () => {
+        return (
+          await axiosInstance.post("/projects/" + projectTag + "/topic", topic)
+        ).data as Topic;
+      });
+    },
+    [axiosInstance],
+  );
+
+  const deleteTopic = useCallback(
+    (projectTag: string, topicLabel: string) => {
+      return errorHandle(async () => {
+        return (
+          await axiosInstance.delete(
+            "/projects/" + projectTag + "/topic/" + topicLabel,
+          )
+        ).data as Topic;
+      });
+    },
+    [axiosInstance],
+  );
+
+  const createProject = useCallback(
+    (project: Project) => {
+      return errorHandle(async () => {
+        return (await axiosInstance.post("/projects", project)).data as Project;
+      });
+    },
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
     fetchToken,
     fetchJobs,
-    fetchProjects,
+    fetchProjects: loadProjects,
     fetchTopics,
     fetchOwnedProjects,
     fetchSubscriptions,
@@ -160,6 +199,9 @@ const useApi = () => {
     fetchProjectMembers,
     revokeUserAccessRights,
     addUserAccessRights,
+    createNewTopic,
+    deleteTopic,
+    createProject,
   };
 };
 

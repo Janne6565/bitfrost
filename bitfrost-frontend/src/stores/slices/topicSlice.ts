@@ -14,6 +14,7 @@ const topicSlice = createSlice({
       delete state.topics[action.payload];
     },
     setTopics: (state, action: PayloadAction<Topic[]>) => {
+      state.topics = {};
       action.payload.forEach((item) => {
         state.topics[item.uuid] = item;
       });

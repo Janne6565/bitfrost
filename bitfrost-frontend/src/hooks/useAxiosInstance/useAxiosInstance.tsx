@@ -5,16 +5,20 @@ import axios from "axios";
 const useAxiosInstance = (baseUrl: string) => {
   const { jwt } = useContext(AuthContext);
 
+  const authHeader = jwt ? `Bearer ${jwt}` : null;
+
   return useMemo(() => {
     const instance = axios.create({ baseURL: baseUrl });
 
-    const authHeader = jwt ? `Bearer ${jwt}` : null;
     instance.interceptors.request.use((config) => {
-      config.headers.Authorization = authHeader;
+      if (authHeader) {
+        config.headers.Authorization = authHeader;
+      }
       return config;
     });
+
     return instance;
-  }, [baseUrl, jwt]);
+  }, [baseUrl, authHeader]); //remove authHeader after login implementation and use jwt
 };
 
 export default useAxiosInstance;
