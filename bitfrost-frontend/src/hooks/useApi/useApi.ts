@@ -147,6 +147,24 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const approveSubscription = useCallback(
+      async (uuid: string) =>
+          errorHandle(async () => {
+              const res = await axiosInstance.post(`/project-requests/approve/${uuid}`);
+              return res.status == 200;
+          }),
+      [axiosInstance],
+  );
+
+  const deleteSubscription = useCallback(
+      async (uuid: string) =>
+          errorHandle(async () => {
+              const res = await axiosInstance.delete(`/project-requests/${uuid}`);
+              return res.status == 200;
+          }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
@@ -160,6 +178,8 @@ const useApi = () => {
     fetchProjectMembers,
     revokeUserAccessRights,
     addUserAccessRights,
+    approveSubscription,
+    deleteSubscription,
   };
 };
 

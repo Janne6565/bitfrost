@@ -1,62 +1,54 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { useTypedSelector } from "@/stores/rootReducer.ts"; // adjust import path
 import useApi from "@/hooks/useApi/useApi";
-import useAxiosInstance from "@/hooks/useAxiosInstance/useAxiosInstance";
-import config from "../../../app.config.json";
-import type { Subscription } from "@/@types/backendTypes";
-import { SubscriptionState } from "@/@types/backendTypes";
+import {
+    setSubscription,
+    removeSubscription,
+    setSubscriptions,
+} from "@/stores/slices/subscriptionSlice";
+import type {Subscription } from "@/@types/backendTypes.ts";
+import {SubscriptionState } from "@/@types/backendTypes.ts";
 
 export default function useSubscriptionsList() {
-    const { fetchSubscriptions, fetchToken } = useApi();
-    const axios = useAxiosInstance(config.backendBaseUrl);
+    const dispatch = useDispatch();
+    const { fetchSubscriptions, approveSubscription, deleteSubscription } = useApi();
 
-    const [subs, setSubs] = useState<Subscription[]>([]);
-    const [loading, setLoading] = useState(true);
+    const subs: Subscription[] = useTypedSelector((state) =>
+        Object.values(state.subscriptionSlice.subscriptions),
+    );
 
-    const load = useCallback(async () => {
-        setLoading(true);
-        try {
-            const token = await fetchToken();
-            if (token) localStorage.setItem("idToken", token);
-            const result = await fetchSubscriptions();
-            const normalized = Array.isArray(result)
-                ? result
-                : result && typeof result === "object"
-                    ? Object.values(result as Record<string, Subscription>)
-                    : [];
-            setSubs(normalized);
-        } catch (e) {
-            console.error("Failed to load subscriptions:", e);
-            setSubs([]);
-        } finally {
-            setLoading(false);
+    const reload = useCallback(async () => {
+        const result = await fetchSubscriptions();
+        if (result) {
+            dispatch(setSubscriptions(result));
         }
-    }, [fetchSubscriptions, fetchToken]);
-
-    useEffect(() => {
-        load();
-    }, [load]);
+    }, [dispatch, fetchSubscriptions]);
 
     const approve = useCallback(
         async (uuid: string) => {
-            const res = await axios.post(`/project-requests/approve/${uuid}`);
-            if (res.status === 200) {
-                setSubs((prev) =>
-                    prev.map((s) => (s.uuid === uuid ? { ...s, state: SubscriptionState.APPROVED } : s)),
-                );
+            const ok = await approveSubscription(uuid);
+            if (ok) {
+                const sub = subs.find((s) => s.uuid === uuid);
+                if (sub) {
+                    dispatch(
+                        setSubscription({ ...sub, state: SubscriptionState.APPROVED }),
+                    );
+                }
             }
         },
-        [axios],
+        [approveSubscription, dispatch, subs],
     );
 
     const remove = useCallback(
         async (uuid: string) => {
-            const res = await axios.delete(`/project-requests/${uuid}`);
-            if (res.status === 200) {
-                setSubs((prev) => prev.filter((s) => s.uuid !== uuid));
+            const ok = await deleteSubscription(uuid);
+            if (ok) {
+                dispatch(removeSubscription(uuid));
             }
         },
-        [axios],
+        [deleteSubscription, dispatch],
     );
 
-    return { subs, loading, reload: load, approve, remove };
+    return { subs, reload, approve, remove };
 }
