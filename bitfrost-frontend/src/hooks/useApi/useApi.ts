@@ -1,5 +1,4 @@
 import useAxiosInstance from "@/hooks/useAxiosInstance/useAxiosInstance.tsx";
-import config from "../../../app.config.json";
 import type {
   Job,
   Message,
@@ -10,9 +9,10 @@ import type {
 } from "@/@types/backendTypes.ts";
 import { useCallback } from "react";
 import { enqueueSnackbar } from "notistack";
+import { API_BASE_URL } from "@/config.ts";
 
 const useApi = () => {
-  const axiosInstance = useAxiosInstance(config.backendBaseUrl);
+  const axiosInstance = useAxiosInstance(API_BASE_URL);
   const errorHandle = async <T>(
     callback: () => Promise<T>,
   ): Promise<T | undefined> => {

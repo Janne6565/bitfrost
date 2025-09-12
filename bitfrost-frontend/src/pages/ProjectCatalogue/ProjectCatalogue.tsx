@@ -1,29 +1,12 @@
-import { useEffect, useState } from "react";
-import useApi from "@/hooks/useApi/useApi";
+import { useMemo } from "react";
 import { Sheet, Typography } from "@mui/joy";
-import type { Project } from "@/@types/backendTypes";
 import Box from "@mui/joy/Box";
 import ProjectCard from "./ProjectCard";
-import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
+import { useTypedSelector } from "@/stores/rootReducer.ts";
 
 export default function ProjectCatalogue() {
-  const { fetchProjects } = useApi();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadProjects = async () => {
-      const result = await loadProjects();
-      if (Array.isArray(result)) {
-        setProjects(result);
-      } else {
-        console.warn("No Array as response");
-      }
-      setLoading(false);
-    };
-
-    loadProjects();
-  }, [fetchProjects]);
+  const allProjects = useTypedSelector((state) => state.projectSlice.projects);
+  const projects = useMemo(() => Object.values(allProjects), [allProjects]);
 
   const onSubscribe = () => {
     console.log("subscribe");
@@ -46,18 +29,14 @@ export default function ProjectCatalogue() {
           gap: 2,
         }}
       >
-        {loading ? (
-          <CustomCircularProgress size={"lg"} />
-        ) : (
-          projects.map((project) => (
-            <ProjectCard
-              key={project.projectTag}
-              project={project}
-              onSubscribe={onSubscribe}
-              openDetailModal={openDetailModal}
-            />
-          ))
-        )}
+        {projects.map((project) => (
+          <ProjectCard
+            key={project.projectTag}
+            project={project}
+            onSubscribe={onSubscribe}
+            openDetailModal={openDetailModal}
+          />
+        ))}
       </Box>
     </Sheet>
   );
