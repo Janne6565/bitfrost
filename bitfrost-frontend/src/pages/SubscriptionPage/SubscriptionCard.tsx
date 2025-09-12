@@ -93,6 +93,25 @@ const SubscriptionCard = ({
                     </Typography>
                 </Tooltip>
 
+                <Tooltip title={subscription.topicLabel}>
+                    <Typography
+                        level="body-sm"
+                        noWrap
+                        sx={{
+                            mt: 0.25,
+                            display: "block",
+                            maxWidth: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }}
+                    >
+                        Requested Topic:{" "}
+                        <Typography component="span" level="body-sm" noWrap sx={{ fontFamily: "monospace" }}>
+                            {subscription.topicLabel}
+                        </Typography>
+                    </Typography>
+                </Tooltip>
+
                 <Box sx={{ flexGrow: 1 }} />
                 <Divider />
 
@@ -102,6 +121,7 @@ const SubscriptionCard = ({
                             <Button
                                 size="sm"
                                 variant="soft"
+                                color="success"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setOpenApprove(true);
