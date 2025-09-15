@@ -147,6 +147,24 @@ const useApi = () => {
     [axiosInstance],
   );
 
+    const requestProjectSubscription = useCallback(
+    async (requestingProjectTag: string, requestedProjectTag: string ,label: string, callbackUrl: string) =>
+      errorHandle(async () => {
+        try {
+          const response = await axiosInstance.post(
+            "project-requests/" + requestingProjectTag + "/request/" + requestedProjectTag + "/" + label, {callbackUrl}
+          );
+          if (response.status == 200) {
+            return "";
+          }
+        } catch (error) {
+          const errorResponse = error as { response?: { data: string } };
+          return errorResponse.response?.data;
+        }
+      }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
@@ -160,6 +178,7 @@ const useApi = () => {
     fetchProjectMembers,
     revokeUserAccessRights,
     addUserAccessRights,
+    requestProjectSubscription
   };
 };
 

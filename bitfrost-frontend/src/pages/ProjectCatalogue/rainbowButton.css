@@ -1,0 +1,36 @@
+@keyframes rainbow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.rainbow-button {
+  min-width: 70px;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 0.75rem;
+  border-radius: var(--joy-radius-md);
+  transition: all 0.4s ease-in-out, box-shadow 0.2s;
+}
+
+.rainbow-button:hover {
+  background: linear-gradient(
+    270deg,
+    #FB3F2E,
+    #FFB813,
+    #2CC589,
+    #178AEC,
+    #9933ff,
+    #ff33cc,
+    #FB3F2E,
+    #FFB813,
+    #2CC589
+  );
+  background-size: 400% 400%;
+  animation: rainbow 4s linear infinite;
+  box-shadow: var(--joy-shadow-md);
+  color: #ffffff;
+}
