@@ -1,11 +1,10 @@
-import { Button, Tooltip, Typography } from "@mui/joy";
+import { Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import type { Project } from "@/@types/backendTypes";
 import "./rainbowButton.css";
-import { memo, useMemo, type JSX } from "react";
+import { type JSX, memo, useMemo } from "react";
 import ProjectCard from "./ProjectCard";
 import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
-
 
 interface ProjectGridProps {
   projects: Project[];
@@ -14,22 +13,26 @@ interface ProjectGridProps {
   loading: boolean;
 }
 
-
-
-const ProjectGrid: React.FC<ProjectGridProps> = memo(({ projects, onSubscribe, openDetailModal, loading }: ProjectGridProps): JSX.Element => {
-
+const ProjectGrid: React.FC<ProjectGridProps> = memo(
+  ({
+    projects,
+    onSubscribe,
+    openDetailModal,
+    loading,
+  }: ProjectGridProps): JSX.Element => {
     const renderedProjectCards = useMemo(() => {
-  return projects.map((project) => (
-    <ProjectCard
-      key={project.projectTag}
-      project={project}
-      onSubscribe={onSubscribe}
-      openDetailModal={openDetailModal}
-    />
-  ));
-}, [projects]);
-  return (
-    <Box
+      return projects.map((project) => (
+        <ProjectCard
+          key={project.projectTag}
+          project={project}
+          onSubscribe={onSubscribe}
+          openDetailModal={openDetailModal}
+        />
+      ));
+    }, [onSubscribe, openDetailModal, projects]);
+
+    return (
+      <Box
         sx={{
           width: "100%",
           display: "grid",
@@ -38,14 +41,15 @@ const ProjectGrid: React.FC<ProjectGridProps> = memo(({ projects, onSubscribe, o
         }}
       >
         {loading ? (
-    <CustomCircularProgress size="lg" />
-  ) : projects.length === 0 ? (
-    <Typography>No projects match your search.</Typography>
-  ) : (
-    renderedProjectCards
-  )}
+          <CustomCircularProgress size="lg" />
+        ) : projects.length === 0 ? (
+          <Typography>No projects match your search.</Typography>
+        ) : (
+          renderedProjectCards
+        )}
       </Box>
-  );
-});
+    );
+  },
+);
 
 export default ProjectGrid;

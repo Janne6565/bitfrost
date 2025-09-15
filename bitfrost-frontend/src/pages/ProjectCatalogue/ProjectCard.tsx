@@ -21,7 +21,7 @@ function ProjectCard({
       variant="outlined"
       key={project.projectTag}
       size="lg"
-      onClick={(e) => {
+      onClick={() => {
         const sel = window.getSelection();
         if (sel && sel.toString().length > 0) return;
         openDetailModal(project);
@@ -32,14 +32,16 @@ function ProjectCard({
         justifyContent: "flex-start",
         minHeight: 100,
         p: 2,
+        transition: "all 0.4s ease-in-out, box-shadow 0.2s",
+        cursor: "pointer",
         gap: 0.5,
-        "&:hover, &:focus-within": {
+        "&:hover": {
           transform: "scale(1.01)",
           boxShadow: "md",
           borderColor: "neutral.outlinedHoverBorder",
         },
         "&:active:not(:has(button:active))": {
-          transform: "scale(0.99)",
+          transform: "scale(1.02)",
           boxShadow: "sm",
         },
       }}
@@ -104,6 +106,5 @@ function ProjectCard({
     </Card>
   );
 }
-
 
 export default memo(ProjectCard);

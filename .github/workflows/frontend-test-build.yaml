@@ -1,0 +1,31 @@
+name: Test Frontend Build
+
+on:
+  push:
+
+jobs:
+  test:
+    name: Test Frontend Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bitfrost-frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show files in dir
+        run: ls -la
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the project
+        run: npm run build

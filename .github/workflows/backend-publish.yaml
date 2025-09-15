@@ -1,0 +1,38 @@
+name: Publish Backend Docker Image
+
+on:
+  push:
+    paths: ["bitfrost-backend/**"]
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bitfrost
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Debug print all files
+        run: ls -la
+
+      - name: Build Docker image
+        run: docker build . --platform linux/amd64 -t janne5656/bitfrost-backend:${{ github.sha }} -t janne5656/bitfrost-backend:latest
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          registry: docker.io
+
+      - name: Push Docker image
+        run: |
+          docker push janne5656/bitfrost-backend
+          docker push janne5656/bitfrost-backend:${{ github.sha }}

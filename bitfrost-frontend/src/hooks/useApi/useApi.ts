@@ -1,5 +1,4 @@
 import useAxiosInstance from "@/hooks/useAxiosInstance/useAxiosInstance.tsx";
-import config from "../../../app.config.json";
 import type {
   Job,
   Message,
@@ -9,16 +8,23 @@ import type {
   User,
 } from "@/@types/backendTypes.ts";
 import { useCallback } from "react";
+import { enqueueSnackbar } from "notistack";
+import { API_BASE_URL } from "@/config.ts";
 
 const useApi = () => {
-  const axiosInstance = useAxiosInstance(config.backendBaseUrl);
+  const axiosInstance = useAxiosInstance(API_BASE_URL);
   const errorHandle = async <T>(
     callback: () => Promise<T>,
   ): Promise<T | undefined> => {
     try {
       return await callback();
     } catch (error) {
-      console.warn("Error while API call:", error);
+      const usableError = error as { response?: { data: string } };
+      enqueueSnackbar(usableError.response?.data ?? "Unknown error", {
+        variant: "error",
+      });
+      console.warn("Error while API call:", usableError);
+      throw new Error(usableError.response?.data ?? "Unknown error");
     }
   };
 
@@ -147,19 +153,79 @@ const useApi = () => {
     [axiosInstance],
   );
 
-    const requestProjectSubscription = useCallback(
-    async (requestingProjectTag: string, requestedProjectTag: string ,label: string, callbackUrl: string) =>
+  const createNewTopic = useCallback(
+    (projectTag: string, topic: { label: string; description: string }) => {
+      return errorHandle(async () => {
+        return (
+          await axiosInstance.post("/projects/" + projectTag + "/topic", topic)
+        ).data as Topic;
+      });
+    },
+    [axiosInstance],
+  );
+
+  const deleteTopic = useCallback(
+    (projectTag: string, topicLabel: string) => {
+      return errorHandle(async () => {
+        return (
+          await axiosInstance.delete(
+            "/projects/" + projectTag + "/topic/" + topicLabel,
+          )
+        ).data as Topic;
+      });
+    },
+    [axiosInstance],
+  );
+
+  const createProject = useCallback(
+    (project: Project) => {
+      return errorHandle(async () => {
+        return (await axiosInstance.post("/projects", project)).data as Project;
+      });
+    },
+    [axiosInstance],
+  );
+
+  const approveSubscription = useCallback(
+    async (uuid: string) =>
       errorHandle(async () => {
-        try {
-          const response = await axiosInstance.post(
-            "project-requests/" + requestingProjectTag + "/request/" + requestedProjectTag + "/" + label, {callbackUrl}
-          );
-          if (response.status == 200) {
-            return "";
-          }
-        } catch (error) {
-          const errorResponse = error as { response?: { data: string } };
-          return errorResponse.response?.data;
+        const res = await axiosInstance.post(
+          `/project-requests/approve/${uuid}`,
+        );
+        return res.status == 200;
+      }),
+    [axiosInstance],
+  );
+
+  const deleteSubscription = useCallback(
+    async (uuid: string) =>
+      errorHandle(async () => {
+        const res = await axiosInstance.delete(`/project-requests/${uuid}`);
+        return res.status == 200;
+      }),
+    [axiosInstance],
+  );
+
+  const requestProjectSubscription = useCallback(
+    async (
+      requestingProjectTag: string,
+      requestedProjectTag: string,
+      label: string,
+      callbackUrl: string,
+    ) =>
+      errorHandle(async () => {
+        const response = await axiosInstance.post(
+          "project-requests/" +
+            requestingProjectTag +
+            "/request/" +
+            requestedProjectTag +
+            "/" +
+            label,
+          callbackUrl,
+          { headers: { "Content-Type": "text/plain" } },
+        );
+        if (response.status == 200) {
+          return "";
         }
       }),
     [axiosInstance],
@@ -178,7 +244,12 @@ const useApi = () => {
     fetchProjectMembers,
     revokeUserAccessRights,
     addUserAccessRights,
-    requestProjectSubscription
+    requestProjectSubscription,
+    createNewTopic,
+    deleteTopic,
+    createProject,
+    approveSubscription,
+    deleteSubscription,
   };
 };
 

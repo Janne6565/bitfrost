@@ -19,25 +19,54 @@ const useDataLoading = () => {
     fetchSubscriptions,
   } = useApi();
 
-  const initialLoading = useCallback(async () => {
-    const projects = await fetchProjects();
-    const ownedProjects = await fetchOwnedProjects();
-    const messages = await fetchMessages();
-    const topics = await fetchTopics();
-    const jobs = await fetchJobs();
-    const subscriptions = await fetchSubscriptions();
-    dispatch(setProjects(projects ?? []));
-    dispatch(setOwnedProjects(ownedProjects ?? []));
-    dispatch(setMessages(messages ?? []));
-    dispatch(setTopics(topics ?? []));
-    dispatch(setJobs(jobs ?? []));
-    dispatch(setSubscriptions(subscriptions ?? []));
-    setTimeout(() => {
-      initialLoading();
-    }, 2000);
-  }, [fetchProjects, fetchOwnedProjects]);
+  const loadProjects = useCallback(async () => {
+    await fetchProjects().then((projects) => {
+      dispatch(setProjects(projects ?? []));
+    });
+  }, [dispatch, fetchProjects]);
 
-  return { initialLoading };
+  const loadTopics = useCallback(async () => {
+    const topics = await fetchTopics();
+    dispatch(setTopics(topics ?? []));
+  }, [fetchTopics, dispatch]);
+
+  const loadOwnedProjects = useCallback(async () => {
+    const ownedProjects = await fetchOwnedProjects();
+    dispatch(setOwnedProjects(ownedProjects ?? []));
+  }, [fetchOwnedProjects, dispatch]);
+
+  const loadSubscriptions = useCallback(async () => {
+    const subscriptions = await fetchSubscriptions();
+    dispatch(setSubscriptions(subscriptions ?? []));
+  }, [fetchSubscriptions, dispatch]);
+
+  const initialLoading = useCallback(async () => {
+    const messages = await fetchMessages();
+    const jobs = await fetchJobs();
+    dispatch(setMessages(messages ?? []));
+    dispatch(setJobs(jobs ?? []));
+    await loadTopics();
+    await loadProjects();
+    await loadOwnedProjects();
+    await loadSubscriptions();
+  }, [
+    loadProjects,
+    fetchMessages,
+    fetchJobs,
+    fetchSubscriptions,
+    dispatch,
+    loadTopics,
+    loadOwnedProjects,
+    loadSubscriptions,
+  ]);
+
+  return {
+    initialLoading,
+    loadProjects,
+    loadTopics,
+    loadOwnedProjects,
+    loadSubscriptions,
+  };
 };
 
 export default useDataLoading;

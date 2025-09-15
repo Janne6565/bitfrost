@@ -1,0 +1,34 @@
+name: Publish Frontend Docker Image
+
+on:
+  push:
+    paths: ["bitfrost-frontend/**"]
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: bitfrost-frontend
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v5
+
+      - name: Build Docker image
+        run: docker build . --platform linux/amd64 -t janne5656/bitfrost-frontend:${{ github.sha }} -t janne5656/bitfrost-frontend:latest
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          registry: docker.io
+
+      - name: Push Docker image
+        run: |
+          docker push janne5656/bitfrost-frontend
+          docker push janne5656/bitfrost-frontend:${{ github.sha }}
