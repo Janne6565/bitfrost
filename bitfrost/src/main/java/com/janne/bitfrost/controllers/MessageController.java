@@ -19,7 +19,7 @@ public class MessageController {
 
     @PostMapping("/publish/{projectTag}/{topic}")
     public ResponseEntity<MessageDto> publishMessage(@PathVariable String projectTag, @PathVariable String topic, @RequestBody String message) {
-        authService.assertUserHasProjectAccess(projectTag);
+        authService.assertApplicationAccessOnProject(projectTag);
         return ResponseEntity.ok(messagePublishingService.publishMessage(projectTag, topic, message).toDto());
     }
 

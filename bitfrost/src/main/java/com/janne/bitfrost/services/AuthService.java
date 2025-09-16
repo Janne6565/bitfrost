@@ -2,6 +2,7 @@ package com.janne.bitfrost.services;
 
 import com.janne.bitfrost.entities.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -17,8 +19,33 @@ public class AuthService {
     private final ProjectService projectService;
 
     public User getUser() {
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String userEntry = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (userEntry == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to execute this operation");
+        }
+        if (!userEntry.startsWith("USER_")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to execute this operation");
+        }
+        String userId = userEntry.substring(5);
         return userService.getUser(userId).orElseThrow(() -> new UsernameNotFoundException(userId));
+    }
+
+    public String getProjectAuth() {
+        String userEntry = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (userEntry == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to execute this operation");
+        }
+        if (!userEntry.startsWith("PROJECT_")) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to execute this operation");
+        }
+        return userEntry.substring(8);
+    }
+
+    public void assertApplicationAccessOnProject(String project) {
+        if (!getProjectAuth().equals(project)) {
+            log.info("User {} is not authorized to access project {}", getProjectAuth(), project);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to execute this operation");
+        }
     }
 
     public void assertUserHasProjectAccess(String projectTag) {

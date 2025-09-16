@@ -1,6 +1,6 @@
 import { Box, Typography, type TypographyProps } from "@mui/joy";
 import { useNavigate, useParams } from "react-router";
-import { ArrowBack, People, Style } from "@mui/icons-material";
+import { ArrowBack, People, Settings, Style } from "@mui/icons-material";
 import ProjectDashboard from "@/components/ProjectDashboard/ProjectDashboard.tsx";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 import { type ReactNode, useMemo, useState } from "react";
@@ -8,6 +8,7 @@ import NotFoundPage from "@/pages/NotFoundPage/NotFoundPage.tsx";
 import ProjectMembersModal from "@/components/ProjectMembersModal/ProjectMembersModal.tsx";
 import Stack from "@mui/material/Stack";
 import ProjectTopicsModal from "@/components/ProjectTopicsModal/ProjectTopicsModal.tsx";
+import ProjectSetupModal from "@/components/ProjectSetupModal/ProjectSetupModal.tsx";
 
 const ButtonDesign = (props: {
   children: ReactNode;
@@ -43,6 +44,7 @@ const ProjectDetailPage = () => {
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [topicsOpen, setTopicsOpen] = useState(false);
+  const [setupModalOpen, setSetupModalOpen] = useState(false);
   const allProjects = useTypedSelector(
     (state) => state.ownedProjectSlice.ownedProjects,
   );
@@ -90,6 +92,9 @@ const ProjectDetailPage = () => {
           <ButtonDesign onClick={() => setSettingsOpen((prev) => !prev)}>
             <People /> Project Members
           </ButtonDesign>
+          <ButtonDesign onClick={() => setSetupModalOpen((prev) => !prev)}>
+            <Settings /> Setup Application
+          </ButtonDesign>
         </Stack>
       </Box>
       <Typography level={"h1"} sx={{ mt: 2.5, mb: 1 }}>
@@ -107,6 +112,11 @@ const ProjectDetailPage = () => {
       <ProjectTopicsModal
         isOpen={topicsOpen}
         setOpen={setTopicsOpen}
+        project={project}
+      />
+      <ProjectSetupModal
+        isOpen={setupModalOpen}
+        setOpen={setSetupModalOpen}
         project={project}
       />
     </Box>

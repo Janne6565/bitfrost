@@ -24,6 +24,7 @@ const GenericModal = (props: {
       <ModalDialog
         sx={{
           ...props.modalDialogSX,
+          overflowY: "auto",
         }}
       >
         <Typography

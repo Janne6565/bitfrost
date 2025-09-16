@@ -5,10 +5,10 @@ import com.janne.bitfrost.models.ProjectDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.ArrayList;
 
 
 @Entity
@@ -23,6 +23,8 @@ public class Project {
     private String projectTag;
     @Column
     private String description;
+    @Column
+    private String projectSecret = null;
     @ToString.Exclude
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Topic> topics = new ArrayList<>(); //null pointer bei getProjects
