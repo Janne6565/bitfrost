@@ -5,14 +5,14 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
   datasource:
     hikari:
       auto-commit: false
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:file:./data/mydb
     driverClassName: org.h2.Driver
     username: sa
     password: password
@@ -24,10 +24,17 @@ app:
       - http://localhost:5173
       - https://bitfrost.sau-portal.de
   jwt:
+    key-id: bitfrost-key
+    issuer-uri: http://localhost:8080
+    keys:
+      public: file:./public_key.pem
+      private: file:./private_key.pem
     identity:
       duration: 36000000 # 10 hours
     refresh:
       duration: 2678400000 # 1 month
+    executor:
+      duration: 3600000 # 1 hour
     secret: aa7b0e9187c3eec1bb5da2297b87c0ad6d8cb71188efea3c5b2d5bd189e5e397
     private-key-path: private_key.pem
 management:
