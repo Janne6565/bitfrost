@@ -34,3 +34,36 @@
   box-shadow: var(--joy-shadow-md);
   color: #ffffff;
 }
+
+.rainbow-button:disabled {
+  animation: none;
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+  transition: none;
+}
+
+
+
+.rainbow-snackbar {
+  background: linear-gradient(
+    270deg,
+    #FB3F2E,
+    #FFB813,
+    #2CC589,
+    #178AEC,
+    #9933ff,
+    #ff33cc,
+    #FB3F2E,
+    #FFB813,
+    #2CC589
+  );
+  background-size: 400% 400%;
+  animation: rainbow 4s linear infinite;
+  color: white;
+  font-weight: bold;
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

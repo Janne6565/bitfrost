@@ -2,13 +2,21 @@ import { useCallback, useState } from "react";
 import { Input, Typography } from "@mui/joy";
 import type { Project } from "@/@types/backendTypes";
 import Box from "@mui/joy/Box";
-import ProjectSubscribeModal from "./SubscribeToProject";
-import Beam from "./Beam";
-import ProjectGrid from "./ProjectGrid";
+import ProjectSubscribeModal from "../../components/SubscribeToProjectModal/SubscribeToProject";
+import Beam from "../../components/SubscribeToProjectModal/Beam";
+import ProjectGrid from "../../components/ProjectCatalogueGrid/ProjectCatalogueGrid";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 
 export default function ProjectCatalogue() {
-  const allProjects = useTypedSelector((state) => state.projectSlice.projects);
+
+
+  const allProjects: Project[] = (Object.values(
+    useTypedSelector((state) => state.projectSlice.projects))).sort((project1, project2) =>
+          project1.projectTag.toLowerCase() > project2.projectTag.toLowerCase()
+            ? 1
+            : -1,
+        );
+                
   const projects = Object.values(allProjects);
 
   const [modalOpen, setModalOpen] = useState(false);

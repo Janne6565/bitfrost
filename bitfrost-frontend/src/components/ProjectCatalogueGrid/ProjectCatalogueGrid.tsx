@@ -1,9 +1,9 @@
 import { Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import type { Project } from "@/@types/backendTypes";
-import "./rainbowButton.css";
+import "../SubscribeToProjectModal/rainbowButton.css";
 import { type JSX, memo, useMemo } from "react";
-import ProjectCard from "./ProjectCard";
+import ProjectCard from "./ProjectCard.tsx";
 import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCircularProgress.tsx";
 
 interface ProjectGridProps {

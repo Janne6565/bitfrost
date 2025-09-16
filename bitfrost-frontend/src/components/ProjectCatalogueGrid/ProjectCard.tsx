@@ -2,7 +2,7 @@ import { Button, Tooltip, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import type { Project } from "@/@types/backendTypes";
-import "./rainbowButton.css";
+import "../SubscribeToProjectModal/rainbowButton.css";
 import { memo } from "react";
 
 interface ProjectCardProps {

@@ -18,6 +18,7 @@ import "./rainbowButton.css";
 import useApi from "@/hooks/useApi/useApi";
 import "./rainbowModal.css";
 import useDataLoading from "@/hooks/useDataLoading/useDataLoading.tsx";
+import { enqueueSnackbar } from "notistack";
 
 interface ProjectSubscribeModalProps {
   open: boolean;
@@ -40,6 +41,7 @@ export default function ProjectSubscribeModal({
 
   const [selectedProjectTag, setSelectedProjectTag] = useState<string | "">(""); //requesting Project
   const [selectedTopic, setSelectedTopic] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const allSubscriptions = useTypedSelector(
     (state) => state.subscriptionSlice,
@@ -56,9 +58,13 @@ export default function ProjectSubscribeModal({
     [project, selectedProjectTag],
   ); //filter for already requested subscriptions
 
-  const allOwnedProjects = useTypedSelector(
-    (state) => state.ownedProjectSlice,
-  )?.ownedProjects;
+  const allOwnedProjects: Project[] = Object.values(
+    useTypedSelector((state) => state.ownedProjectSlice?.ownedProjects),
+  ).sort((project1, project2) =>
+    project1.projectTag.toLowerCase() > project2.projectTag.toLowerCase()
+      ? 1
+      : -1,
+  );
 
   const allTopics = useTypedSelector((state) => state.topicSlice?.topics);
 
@@ -89,6 +95,7 @@ export default function ProjectSubscribeModal({
     label: string,
     callbackUrl: string,
   ) => {
+    setLoading(true);
     const response = await requestProjectSubscription(
       requestingProjectTag,
       requestedProjectTag,
@@ -96,10 +103,20 @@ export default function ProjectSubscribeModal({
       callbackUrl,
     );
 
-    console.log(response);
     if (!response) {
       await loadSubscriptions();
       closeModal();
+      enqueueSnackbar("", {
+        variant: "success",
+        content: () => (
+          <div className="rainbow-snackbar" style={{ padding: "8px 16px" }}>
+            You opened the Bitfröst Portal 🌌, <br></br> waiting for approval
+            from the other side...
+          </div>
+        ),
+      });
+    } else {
+      setLoading(false);
     }
   };
 
@@ -110,6 +127,7 @@ export default function ProjectSubscribeModal({
     setCallbackUrl("");
     setIsValidUrl(true);
     setSelectedTopic("");
+    setLoading(false);
     onClose();
   }
 
@@ -276,6 +294,7 @@ export default function ProjectSubscribeModal({
               !selectedTopic ||
               !isValidUrl ||
               !callbackUrl ||
+              loading ||
               requestedSubscriptions.includes(selectedTopic)
             }
             onClick={() => {
