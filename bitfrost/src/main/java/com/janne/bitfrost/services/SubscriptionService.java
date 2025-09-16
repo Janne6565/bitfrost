@@ -13,25 +13,26 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
 public class SubscriptionService {
 
+    private static final Pattern URL_REGEX = Pattern.compile(
+        "^https?:\\/\\/[\\w.-]+(?:\\.[\\w.-]+)*(?::\\d+)?[\\/\\w\\-\\._~:\\/?#\\[\\]@!$&'()*+,;=]*$");
+
     private final ProjectRepository projectRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final JobRepository jobRepository;
-    private static final Pattern URL_REGEX = Pattern.compile(
-            "^https?:\\/\\/[\\w.-]+(?:\\.[\\w.-]+)*(?::\\d+)?[\\w\\-\\._~:/?#[\\]@!$&'()*+,;=]*$");
 
     public Subscription requestAccessToProject(String requestingProjectTag, String requestedProjectTag, String label,
-            String callbackUrl) {
+                                               String callbackUrl) {
         Project requestingProject = projectRepository.getReferenceById(requestingProjectTag);
         Project requestedProject = projectRepository.getReferenceById(requestedProjectTag);
         Topic topic = requestedProject.getTopics().stream().filter(t -> t.getLabel().equals(label)).findFirst()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Topic not found"));
         if (topic.getSubscriptions().stream().anyMatch(sub -> sub.getRequestingProject().equals(requestingProject))) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Subscription already exists");
         }
@@ -42,12 +43,12 @@ public class SubscriptionService {
             }
         }
         Subscription subscription = Subscription.builder()
-                .requestedProject(requestedProject)
-                .requestingProject(requestingProject)
-                .topic(topic)
-                .state(Subscription.SubscriptionState.REQUESTED)
-                .callbackUrl(callbackUrl)
-                .build();
+            .requestedProject(requestedProject)
+            .requestingProject(requestingProject)
+            .topic(topic)
+            .state(Subscription.SubscriptionState.REQUESTED)
+            .callbackUrl(callbackUrl)
+            .build();
         Subscription storedSubscription = subscriptionRepository.save(subscription);
         requestingProject.getSubscriptions().add(storedSubscription);
         topic.getSubscriptions().add(storedSubscription);
@@ -58,14 +59,14 @@ public class SubscriptionService {
 
     public void approveAccessRequest(String requestId) {
         Subscription subscription = subscriptionRepository.findById(requestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Access request not found"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Access request not found"));
         subscription.setState(Subscription.SubscriptionState.APPROVED);
         subscriptionRepository.save(subscription);
     }
 
     public Subscription getAccessRequest(String accessRequestId) {
         return subscriptionRepository.findById(accessRequestId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Access request not found"));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Access request not found"));
     }
 
     public void revokeAccessRequest(String accessRequestId) {
