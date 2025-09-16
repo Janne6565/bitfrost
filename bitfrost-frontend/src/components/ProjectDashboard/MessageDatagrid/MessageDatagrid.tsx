@@ -25,7 +25,7 @@ const MessageDatagrid = (props: {
         (message: Message) => new Date(Date.parse(message.date)),
         props.dateRange,
       ).sort((a, b) => Date.parse(b.date) - Date.parse(a.date)),
-    [allMessages],
+    [allMessages, props.dateRange, props.project.projectTag],
   );
   const allTopics = useTypedSelector((state) => state.topicSlice.topics);
   const topics = useMemo(
@@ -33,7 +33,7 @@ const MessageDatagrid = (props: {
       Object.values(allTopics).filter(
         (topic) => topic.project == props.project.projectTag,
       ),
-    [allTopics],
+    [allTopics, props.project.projectTag],
   );
   const allJobs = useTypedSelector((state) => state.jobSlice.jobs);
   const jobs = useMemo(
@@ -45,7 +45,7 @@ const MessageDatagrid = (props: {
         (job: Job) => new Date(job.earliestExecution),
         props.dateRange,
       ),
-    [allJobs],
+    [allJobs, props.dateRange, topics],
   );
   const messageJobs = useMemo(() => {
     const result: { [key: string]: Job[] } = {};

@@ -35,16 +35,20 @@ const useDataLoading = () => {
     dispatch(setOwnedProjects(ownedProjects ?? []));
   }, [fetchOwnedProjects, dispatch]);
 
+  const loadSubscriptions = useCallback(async () => {
+    const subscriptions = await fetchSubscriptions();
+    dispatch(setSubscriptions(subscriptions ?? []));
+  }, [fetchSubscriptions, dispatch]);
+
   const initialLoading = useCallback(async () => {
     const messages = await fetchMessages();
     const jobs = await fetchJobs();
-    const subscriptions = await fetchSubscriptions();
     dispatch(setMessages(messages ?? []));
     dispatch(setJobs(jobs ?? []));
-    dispatch(setSubscriptions(subscriptions ?? []));
     await loadTopics();
     await loadProjects();
     await loadOwnedProjects();
+    await loadSubscriptions();
   }, [
     loadProjects,
     fetchMessages,
@@ -53,9 +57,16 @@ const useDataLoading = () => {
     dispatch,
     loadTopics,
     loadOwnedProjects,
+    loadSubscriptions,
   ]);
 
-  return { initialLoading, loadProjects, loadTopics, loadOwnedProjects };
+  return {
+    initialLoading,
+    loadProjects,
+    loadTopics,
+    loadOwnedProjects,
+    loadSubscriptions,
+  };
 };
 
 export default useDataLoading;

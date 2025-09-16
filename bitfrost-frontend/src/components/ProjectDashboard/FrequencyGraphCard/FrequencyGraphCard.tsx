@@ -54,7 +54,7 @@ const FrequencyGraphCard = (props: {
 }) => {
   const frequencyCount = useMemo(
     () => getCountsPerDay(props.values, props.dateRange),
-    [props.values],
+    [props.dateRange, props.values],
   );
   const pastDays = useMemo(
     () => getPastXDays(props.dateRange),

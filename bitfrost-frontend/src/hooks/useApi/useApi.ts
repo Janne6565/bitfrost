@@ -187,20 +187,47 @@ const useApi = () => {
   );
 
   const approveSubscription = useCallback(
-      async (uuid: string) =>
-          errorHandle(async () => {
-              const res = await axiosInstance.post(`/project-requests/approve/${uuid}`);
-              return res.status == 200;
-          }),
-      [axiosInstance],
+    async (uuid: string) =>
+      errorHandle(async () => {
+        const res = await axiosInstance.post(
+          `/project-requests/approve/${uuid}`,
+        );
+        return res.status == 200;
+      }),
+    [axiosInstance],
   );
 
   const deleteSubscription = useCallback(
-      async (uuid: string) =>
-          errorHandle(async () => {
-              const res = await axiosInstance.delete(`/project-requests/${uuid}`);
-              return res.status == 200;
-          }),
+    async (uuid: string) =>
+      errorHandle(async () => {
+        const res = await axiosInstance.delete(`/project-requests/${uuid}`);
+        return res.status == 200;
+      }),
+    [axiosInstance],
+  );
+
+  const requestProjectSubscription = useCallback(
+    async (
+      requestingProjectTag: string,
+      requestedProjectTag: string,
+      label: string,
+      callbackUrl: string,
+    ) =>
+      errorHandle(async () => {
+        const response = await axiosInstance.post(
+          "project-requests/" +
+            requestingProjectTag +
+            "/request/" +
+            requestedProjectTag +
+            "/" +
+            label,
+          callbackUrl,
+          { headers: { "Content-Type": "text/plain" } },
+        );
+        if (response.status == 200) {
+          return "";
+        }
+      }),
     [axiosInstance],
   );
 
@@ -217,6 +244,7 @@ const useApi = () => {
     fetchProjectMembers,
     revokeUserAccessRights,
     addUserAccessRights,
+    requestProjectSubscription,
     createNewTopic,
     deleteTopic,
     createProject,

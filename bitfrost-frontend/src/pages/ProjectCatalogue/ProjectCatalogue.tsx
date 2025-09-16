@@ -1,17 +1,46 @@
-import { Typography } from "@mui/joy";
+import { useCallback, useState } from "react";
+import { Input, Typography } from "@mui/joy";
+import type { Project } from "@/@types/backendTypes";
 import Box from "@mui/joy/Box";
-import ProjectCard from "./ProjectCard";
+import ProjectSubscribeModal from "../../components/SubscribeToProjectModal/SubscribeToProject";
+import ProjectGrid from "../../components/ProjectCatalogueGrid/ProjectCatalogueGrid";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 
 export default function ProjectCatalogue() {
-  const projects = useTypedSelector((state) => state.projectSlice.projects);
+  const allProjects: Project[] = Object.values(
+    useTypedSelector((state) => state.projectSlice.projects),
+  ).sort((project1, project2) =>
+    project1.projectTag.toLowerCase() > project2.projectTag.toLowerCase()
+      ? 1
+      : -1,
+  );
 
-  const onSubscribe = () => {
-    console.log("subscribe");
-  };
+  const projects = Object.values(allProjects);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const allSub = useTypedSelector(
+    (state) => state.subscriptionSlice,
+  )?.subscriptions;
+
+  const filteredProjects = projects.filter((project) =>
+    project.projectTag.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const handleSubscribeButton = useCallback(
+    (project: Project, origin: { x: number; y: number }) => {
+      setSelectedProject(project);
+      setOrigin(origin);
+      setModalOpen(true);
+    },
+    [],
+  );
 
   const openDetailModal = () => {
-    console.log("details");
+    console.log(allSub);
   };
 
   return (
@@ -24,26 +53,37 @@ export default function ProjectCatalogue() {
         flexDirection: "column",
       }}
     >
-      <Typography level={"h1"} sx={{ mt: 3, mb: 3 }}>
-        Project Catalogue
-      </Typography>
       <Box
         sx={{
-          width: "100%",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-          gap: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
         }}
       >
-        {Object.values(projects).map((project) => (
-          <ProjectCard
-            key={project.projectTag}
-            project={project}
-            onSubscribe={onSubscribe}
-            openDetailModal={openDetailModal}
+        <Typography level="h1">Project Catalogue</Typography>
+        <Box sx={{ minWidth: 240, mt: 5, mb: 3 }}>
+          <Input
+            placeholder="Search by project tag..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{ width: 240 }}
           />
-        ))}
+        </Box>
       </Box>
+
+      <ProjectGrid
+        projects={filteredProjects}
+        onSubscribe={handleSubscribeButton}
+        openDetailModal={openDetailModal}
+        loading={false}
+      />
+      <ProjectSubscribeModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        project={selectedProject}
+        origin={origin}
+      />
     </Box>
   );
 }

@@ -2,14 +2,16 @@ import { Button, Tooltip, Typography } from "@mui/joy";
 import Box from "@mui/joy/Box";
 import Card from "@mui/joy/Card";
 import type { Project } from "@/@types/backendTypes";
+import "../SubscribeToProjectModal/rainbowButton.css";
+import { memo } from "react";
 
 interface ProjectCardProps {
   project: Project;
-  onSubscribe: (project: Project) => void;
+  onSubscribe: (project: Project, origin: { x: number; y: number }) => void;
   openDetailModal: (project: Project) => void;
 }
 
-export default function ProjectCard({
+function ProjectCard({
   project,
   onSubscribe,
   openDetailModal,
@@ -33,13 +35,13 @@ export default function ProjectCard({
         transition: "all 0.4s ease-in-out, box-shadow 0.2s",
         cursor: "pointer",
         gap: 0.5,
-        "&:hover, &:focus-within": {
+        "&:hover": {
           transform: "scale(1.01)",
           boxShadow: "md",
           borderColor: "neutral.outlinedHoverBorder",
         },
         "&:active:not(:has(button:active))": {
-          transform: "scale(0.99)",
+          transform: "scale(1.02)",
           boxShadow: "sm",
         },
       }}
@@ -49,38 +51,27 @@ export default function ProjectCard({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          width: "225px",
         }}
       >
-        <Typography level="h4" noWrap>
-          {project.projectTag}
-        </Typography>
-        <Tooltip title="Subscribe to project" placement="top">
+        <Tooltip title={project.projectTag}>
+          <Typography level="h4" noWrap sx={{ pr: "1rem" }}>
+            {project.projectTag}
+          </Typography>
+        </Tooltip>
+        <Tooltip title="Subscribe to project" placement="top" enterDelay={800}>
           <Button
             onClick={(e) => {
               e.stopPropagation();
-              onSubscribe(project);
+              const rect = e.currentTarget.getBoundingClientRect();
+              onSubscribe(project, {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2,
+              });
             }}
             size="sm"
             variant="soft"
-            sx={{
-              minWidth: 70,
-              px: 1.5,
-              fontSize: "0.75rem",
-              borderRadius: "md",
-              transition: "all 0.4s ease-in-out, box-shadow 0.2s",
-              "&:hover": {
-                background:
-                  "linear-gradient(270deg, #FB3F2E, #FFB813, #2CC589, #178AEC, #9933ff, #ff33cc, #FB3F2E, #FFB813, #2CC589)",
-                backgroundSize: "400% 400%",
-                animation: "rainbow 4s linear infinite",
-                boxShadow: "md",
-                color: "#ffffff",
-              },
-              "@keyframes rainbow": {
-                "0%": { backgroundPosition: "0% 50%" },
-                "100%": { backgroundPosition: "100% 50%" },
-              },
-            }}
+            className="rainbow-button"
           >
             sub🌈
           </Button>
@@ -98,6 +89,7 @@ export default function ProjectCard({
           whiteSpace: "normal",
           wordWrap: "break-word",
         }}
+        enterDelay={800}
       >
         <Typography
           level="body-sm"
@@ -117,3 +109,5 @@ export default function ProjectCard({
     </Card>
   );
 }
+
+export default memo(ProjectCard);
