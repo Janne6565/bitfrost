@@ -32,6 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-src/main/resources/static/public_key.pem
-
 /data

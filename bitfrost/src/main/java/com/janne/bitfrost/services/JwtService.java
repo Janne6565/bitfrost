@@ -52,7 +52,7 @@ public class JwtService {
             case IDENTITY_TOKEN -> jwtIdentityValidityDuration;
             case REFRESH_TOKEN -> jwtRefreshValidityDuration;
             case EXECUTOR_TOKEN -> jwtExecutionValidityDuration;
-            default -> 1000;
+            default -> 0;
         };
 
         JwtClaimsSet jwtClaims = JwtClaimsSet.builder()
