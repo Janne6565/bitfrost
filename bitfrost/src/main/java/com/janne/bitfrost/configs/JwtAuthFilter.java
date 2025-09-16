@@ -3,7 +3,6 @@ package com.janne.bitfrost.configs;
 import com.janne.bitfrost.entities.User;
 import com.janne.bitfrost.services.JwtService;
 import com.janne.bitfrost.services.UserService;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -37,13 +37,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
         try {
-            Claims claims = jwtService.parseJwt(token, JwtService.TokenType.IDENTITY_TOKEN);
+            Jwt claims = jwtService.parseJwt(token, JwtService.TokenType.IDENTITY_TOKEN);
             String userId = claims.getSubject();
             if (userService.getUser(userId).isEmpty()) {
                 filterChain.doFilter(request, response);
                 return;
             }
-            User.UserRole userRole = User.UserRole.valueOf(claims.get("role", String.class));
+            User.UserRole userRole = User.UserRole.valueOf(claims.getClaimAsString("role"));
 
             List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + userRole));
             UsernamePasswordAuthenticationToken authentication =
