@@ -20,7 +20,7 @@ const MessageProxyFrequencyCard = (props: {
         (job: Job) => new Date(job.earliestExecution),
         props.dateRange,
       ),
-    [allJobs, allTopics],
+    [allJobs, allTopics, props.dateRange, props.project.projectTag],
   );
 
   return (

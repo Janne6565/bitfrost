@@ -18,7 +18,7 @@ const MessageFrequencyCard = (props: {
         (message: Message) => new Date(Date.parse(message.date)),
         props.dateRange,
       ),
-    [allMessages],
+    [allMessages, props.dateRange, props.project.projectTag],
   );
 
   return (

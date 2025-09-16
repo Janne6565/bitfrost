@@ -27,7 +27,7 @@ function buildCurl(httpExchangeLog: HttpExchangeLog) {
   let headers: Record<string, string> = {};
   try {
     headers = JSON.parse(httpExchangeLog.requestHeadersJson);
-  } catch (e) {
+  } catch {
     console.warn("Invalid requestHeadersJson, skipping headers.");
   }
 

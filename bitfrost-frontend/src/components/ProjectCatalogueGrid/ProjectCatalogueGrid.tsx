@@ -34,16 +34,21 @@ const ProjectGrid: React.FC<ProjectGridProps> = memo(
     return (
       <Box
         sx={{
-          width: "100%",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-          gap: 2,
+          flexGrow: 1,
+          display: "flex",
+          justifyContent: projects.length == 0 ? "center" : "flex-start",
+          alignItems: projects.length == 0 ? "center" : "flex-start",
+          pb: "10rem",
+          gap: "1rem",
+          flexWrap: "wrap",
         }}
       >
         {loading ? (
           <CustomCircularProgress size="lg" />
         ) : projects.length === 0 ? (
-          <Typography>No projects match your search.</Typography>
+          <Typography color={"neutral"} level={"h3"}>
+            No Projects Found
+          </Typography>
         ) : (
           renderedProjectCards
         )}

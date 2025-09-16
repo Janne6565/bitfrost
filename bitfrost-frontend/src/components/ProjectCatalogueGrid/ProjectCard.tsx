@@ -51,11 +51,14 @@ function ProjectCard({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          width: "225px",
         }}
       >
-        <Typography level="h4" noWrap>
-          {project.projectTag}
-        </Typography>
+        <Tooltip title={project.projectTag}>
+          <Typography level="h4" noWrap sx={{ pr: "1rem" }}>
+            {project.projectTag}
+          </Typography>
+        </Tooltip>
         <Tooltip title="Subscribe to project" placement="top" enterDelay={800}>
           <Button
             onClick={(e) => {

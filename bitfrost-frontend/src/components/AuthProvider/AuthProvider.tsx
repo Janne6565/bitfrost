@@ -52,7 +52,7 @@ const DataLoader = () => {
       setIsLoading(true);
       initialLoading().then(() => setIsLoading(false));
     }
-  }, [initialLoading, authenticated]);
+  }, [initialLoading, authenticated, setIsLoading]);
 
   return <></>;
 };

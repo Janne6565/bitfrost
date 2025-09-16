@@ -55,7 +55,7 @@ export default function ProjectSubscribeModal({
             sub.requestingProjectTag === selectedProjectTag,
         )
         .map((sub) => sub.topicLabel),
-    [project, selectedProjectTag],
+    [allSubscriptions, project?.projectTag, selectedProjectTag],
   ); //filter for already requested subscriptions
 
   const allOwnedProjects: Project[] = Object.values(
@@ -82,12 +82,11 @@ export default function ProjectSubscribeModal({
   const { requestProjectSubscription } = useApi();
   const { loadSubscriptions } = useDataLoading();
 
-  const urlRegex =
-    /^https?:\/\/[\w.-]+(?:\.[\w.-]+)*(?::\d+)?[\/\w\-\._~:\/?#[\]@!$&'()*+,;=]*$/;
-
   useEffect(() => {
+    const urlRegex =
+      /^https?:\/\/[\w.-]+(?:\.[\w.-]+)*(?::\d+)?[\/\w\-\._~:\/?#[\]@!$&'()*+,;=]*$/;
     setIsValidUrl(callbackUrl === "" || urlRegex.test(callbackUrl));
-  }, [callbackUrl, urlRegex]);
+  }, [callbackUrl]);
 
   const handleSubscribe = async (
     requestingProjectTag: string,
@@ -110,8 +109,10 @@ export default function ProjectSubscribeModal({
         variant: "success",
         content: () => (
           <div className="rainbow-snackbar" style={{ padding: "8px 16px" }}>
-            You opened the Bitfröst Portal 🌌, <br></br> waiting for approval
-            from the other side...
+            <Typography>
+              You opened the Bitfröst Portal 🌌, <br></br> waiting for approval
+              from the other side...
+            </Typography>
           </div>
         ),
       });
@@ -194,9 +195,13 @@ export default function ProjectSubscribeModal({
             ))}
           </Select>
           {project.projectTag === selectedProjectTag && (
-            <Typography color={"warning"} level={"body-sm"} sx={{ pt: 1 }}>
-              Warning: You are subscribing to your own Topic, is this
-              intentional?
+            <Typography
+              color={"warning"}
+              level={"body-sm"}
+              sx={{ pt: 1, width: "80%" }}
+            >
+              Warning: You are subscribing to your own Topic, make sure this is
+              intentional
             </Typography>
           )}
         </FormControl>
@@ -252,7 +257,7 @@ export default function ProjectSubscribeModal({
           </Select>
           {requestedSubscriptions.includes(selectedTopic) && (
             <Typography color={"danger"} level={"body-sm"} sx={{ pt: 1 }}>
-              You already have a ongoing subscription to that topic
+              You have already opened the bitfröst to that topic
             </Typography>
           )}
         </FormControl>

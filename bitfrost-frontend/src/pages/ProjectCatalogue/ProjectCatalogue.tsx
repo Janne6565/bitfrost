@@ -3,26 +3,23 @@ import { Input, Typography } from "@mui/joy";
 import type { Project } from "@/@types/backendTypes";
 import Box from "@mui/joy/Box";
 import ProjectSubscribeModal from "../../components/SubscribeToProjectModal/SubscribeToProject";
-import Beam from "../../components/SubscribeToProjectModal/Beam";
 import ProjectGrid from "../../components/ProjectCatalogueGrid/ProjectCatalogueGrid";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 
 export default function ProjectCatalogue() {
+  const allProjects: Project[] = Object.values(
+    useTypedSelector((state) => state.projectSlice.projects),
+  ).sort((project1, project2) =>
+    project1.projectTag.toLowerCase() > project2.projectTag.toLowerCase()
+      ? 1
+      : -1,
+  );
 
-
-  const allProjects: Project[] = (Object.values(
-    useTypedSelector((state) => state.projectSlice.projects))).sort((project1, project2) =>
-          project1.projectTag.toLowerCase() > project2.projectTag.toLowerCase()
-            ? 1
-            : -1,
-        );
-                
   const projects = Object.values(allProjects);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
-  const [showBeam, setShowBeam] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   const allSub = useTypedSelector(
@@ -38,7 +35,6 @@ export default function ProjectCatalogue() {
       setSelectedProject(project);
       setOrigin(origin);
       setModalOpen(true);
-      setShowBeam(true);
     },
     [],
   );
@@ -82,14 +78,6 @@ export default function ProjectCatalogue() {
         openDetailModal={openDetailModal}
         loading={false}
       />
-      {showBeam && origin && (
-        <Beam
-          origin={origin}
-          onAnimationEnd={() => {
-            setShowBeam(false);
-          }}
-        />
-      )}
       <ProjectSubscribeModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
