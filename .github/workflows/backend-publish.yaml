@@ -2,7 +2,7 @@ name: Publish Backend Docker Image
 
 on:
   push:
-    paths: ["bitfrost-backend/**"]
+    paths: ["bitfrost/**"]
     branches:
       - main
 
