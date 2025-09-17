@@ -26,7 +26,7 @@ const ProjectGrid: React.FC<ProjectGridProps> = memo(
           openDetailModal={openDetailModal}
         />
       ));
-    }, [ openDetailModal, projects]);
+    }, [openDetailModal, projects]);
 
     return (
       <Box
