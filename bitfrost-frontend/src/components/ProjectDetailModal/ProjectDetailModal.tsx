@@ -58,7 +58,7 @@ const ProjectDetailModal = (props: {
                 size="lg"
                 variant="soft"
                 className="rainbow-button"
-                sx={{minWidth: "160px"}}
+                sx={{ minWidth: "160px" }}
               >
                 Subscribe 🌈
               </Button>
