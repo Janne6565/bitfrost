@@ -37,7 +37,7 @@ const ProjectDetailModal = (props: {
           <Stack spacing={5} direction={"row"} alignItems={"center"}>
             <Box sx={{ flexGrow: 1 }}>
               <Typography level={"h3"}>{props.project.projectTag}</Typography>
-              <Typography level={"body-md"} sx={{textAlign: "justify"}}>
+              <Typography level={"body-md"} sx={{ textAlign: "justify" }}>
                 {props.project.description}
               </Typography>
             </Box>
