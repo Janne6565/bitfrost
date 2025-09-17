@@ -2,6 +2,7 @@ package com.janne.bitfrost.services;
 
 import com.janne.bitfrost.entities.HttpExchangeLog;
 import com.janne.bitfrost.entities.Job;
+import com.janne.bitfrost.entities.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -10,27 +11,35 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class JobExecutorService {
-    private final WebClient webClient;
+    private final WebClient webClient = WebClient.create();
+    private final JwtService jwtService;
 
-    public JobExecutorService() {
-        this.webClient = WebClient.create();
+    public JobExecutorService(JwtService jwtService) {
+        this.jwtService = jwtService;
     }
 
     public Mono<HttpExchangeLog> executeJob(Job job) {
         log.info("Executing job {}", job);
-        return sendPostRequest(job.getSubscription().getCallbackUrl(), job.getMessage().getMessage(), "TestAuth");
+        String jwt = jwtService.generateToken(
+            Map.of("authorities", List.of("BITFROST_EXECUTOR", "send_" + job.getTopic().getLabel())),
+            job.getTopic().getProject().getProjectTag(),
+            JwtService.TokenType.EXECUTOR_TOKEN,
+            User.UserRole.EXECUTOR
+        );
+        return sendPostRequest(job.getSubscription().getCallbackUrl(), job.getMessage().getMessage(), jwt);
     }
 
     public Mono<HttpExchangeLog> sendPostRequest(String url, String payload, String authHeaderValue) {
         return webClient.post()
             .uri(url)
-            .header(HttpHeaders.AUTHORIZATION, authHeaderValue)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + authHeaderValue)
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(payload)
             .exchangeToMono(response -> response.bodyToMono(String.class)
@@ -39,12 +48,12 @@ public class JobExecutorService {
                     HttpExchangeLog log = new HttpExchangeLog();
                     log.setUri(url);
                     log.setMethod("POST");
-                    log.setRequestBody(payload.toString());
+                    log.setRequestBody(payload);
                     log.setTimestamp(Instant.now());
                     log.setStatusCode(response.statusCode().value());
 
                     // Headers
-                    Map<String, String> reqHeaders = Map.of(HttpHeaders.AUTHORIZATION, authHeaderValue);
+                    Map<String, String> reqHeaders = Map.of(HttpHeaders.AUTHORIZATION, "Bearer " + authHeaderValue);
                     log.setRequestHeaders(reqHeaders);
 
                     Map<String, String> respHeaders = response.headers().asHttpHeaders().entrySet().stream()
@@ -59,7 +68,7 @@ public class JobExecutorService {
                 HttpExchangeLog log = new HttpExchangeLog();
                 log.setUri(url);
                 log.setMethod("POST");
-                log.setRequestBody(payload.toString());
+                log.setRequestBody(payload);
                 log.setTimestamp(Instant.now());
                 if (error instanceof org.springframework.web.reactive.function.client.WebClientResponseException ex) {
                     log.setStatusCode(ex.getRawStatusCode());

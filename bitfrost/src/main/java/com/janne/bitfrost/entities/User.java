@@ -1,12 +1,9 @@
 package com.janne.bitfrost.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.janne.bitfrost.models.UserDto;
 import jakarta.persistence.*;
 import lombok.*;
-import org.apache.commons.lang3.builder.HashCodeExclude;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +47,7 @@ public class User {
 
     public enum UserRole {
         ADMIN,
-        DEVELOPER
+        DEVELOPER,
+        EXECUTOR
     }
 }
