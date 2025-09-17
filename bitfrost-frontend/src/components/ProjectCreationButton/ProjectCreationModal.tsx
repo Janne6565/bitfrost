@@ -58,7 +58,7 @@ const ProjectCreationModal = (props: {
           </Typography>
         )}
       </FormControl>
-      <FormControl sx={{ mt: 2 }}>
+      <FormControl sx={{mt: 2}}>
         <FormLabel>Project Description</FormLabel>
         <Textarea
           placeholder={
