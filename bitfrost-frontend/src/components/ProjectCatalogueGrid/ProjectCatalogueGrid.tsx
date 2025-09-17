@@ -8,7 +8,6 @@ import CustomCircularProgress from "@/components/CustomCircularProgress/CustomCi
 
 interface ProjectGridProps {
   projects: Project[];
-  onSubscribe: (project: Project, origin: { x: number; y: number }) => void;
   openDetailModal: (project: Project) => void;
   loading: boolean;
 }
@@ -16,7 +15,6 @@ interface ProjectGridProps {
 const ProjectGrid: React.FC<ProjectGridProps> = memo(
   ({
     projects,
-    onSubscribe,
     openDetailModal,
     loading,
   }: ProjectGridProps): JSX.Element => {
@@ -25,11 +23,10 @@ const ProjectGrid: React.FC<ProjectGridProps> = memo(
         <ProjectCard
           key={project.projectTag}
           project={project}
-          onSubscribe={onSubscribe}
           openDetailModal={openDetailModal}
         />
       ));
-    }, [onSubscribe, openDetailModal, projects]);
+    }, [ openDetailModal, projects]);
 
     return (
       <Box

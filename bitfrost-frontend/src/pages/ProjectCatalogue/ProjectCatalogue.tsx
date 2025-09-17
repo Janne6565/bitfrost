@@ -1,8 +1,7 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Input, Typography } from "@mui/joy";
 import type { Project } from "@/@types/backendTypes";
 import Box from "@mui/joy/Box";
-import ProjectSubscribeModal from "../../components/SubscribeToProjectModal/SubscribeToProject";
 import ProjectGrid from "../../components/ProjectCatalogueGrid/ProjectCatalogueGrid";
 import { useTypedSelector } from "@/stores/rootReducer.ts";
 
@@ -17,9 +16,6 @@ export default function ProjectCatalogue() {
 
   const projects = Object.values(allProjects);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [origin, setOrigin] = useState<{ x: number; y: number } | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const allSub = useTypedSelector(
@@ -28,15 +24,6 @@ export default function ProjectCatalogue() {
 
   const filteredProjects = projects.filter((project) =>
     project.projectTag.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  const handleSubscribeButton = useCallback(
-    (project: Project, origin: { x: number; y: number }) => {
-      setSelectedProject(project);
-      setOrigin(origin);
-      setModalOpen(true);
-    },
-    [],
   );
 
   const openDetailModal = () => {
@@ -71,18 +58,10 @@ export default function ProjectCatalogue() {
           />
         </Box>
       </Box>
-
       <ProjectGrid
         projects={filteredProjects}
-        onSubscribe={handleSubscribeButton}
         openDetailModal={openDetailModal}
         loading={false}
-      />
-      <ProjectSubscribeModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        project={selectedProject}
-        origin={origin}
       />
     </Box>
   );

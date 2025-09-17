@@ -1,4 +1,4 @@
-import { Divider, Modal, ModalClose, ModalDialog, Typography } from "@mui/joy";
+import { Box, Divider, Modal, ModalClose, ModalDialog, Typography } from "@mui/joy";
 import type { SxProps } from "@mui/material";
 import type { ReactNode } from "react";
 
@@ -39,7 +39,7 @@ const GenericModal = (props: {
           <ModalClose sx={{ position: "relative", top: 0, right: 0 }} />
         </Typography>
         <Divider inset="none" sx={{ marginBottom: 1 }} />
-        {props.children}
+        <Box sx={{ p: "0 10px" }}>{props.children}</Box>
       </ModalDialog>
     </Modal>
   );

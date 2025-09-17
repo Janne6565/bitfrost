@@ -42,7 +42,7 @@ const ProjectCreationModal = (props: {
       <FormControl>
         <FormLabel>Project Name</FormLabel>
         <Input
-          placeholder={"User Service"}
+          placeholder={"User-Service"}
           onChange={(e) => setProjectName(e.target.value.trim())}
           disabled={isLoading}
           error={!isProjectNameValid}
@@ -58,7 +58,7 @@ const ProjectCreationModal = (props: {
           </Typography>
         )}
       </FormControl>
-      <FormControl>
+      <FormControl sx={{ mt: 2 }}>
         <FormLabel>Project Description</FormLabel>
         <Textarea
           placeholder={
@@ -78,6 +78,7 @@ const ProjectCreationModal = (props: {
       </FormControl>
 
       <Button
+        sx={{mt: 2}}
         disabled={!checkValidity() || isLoading}
         onClick={() => {
           setLoading(true);
