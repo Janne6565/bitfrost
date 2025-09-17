@@ -69,7 +69,7 @@ const ProjectDetailModal = (props: {
               Topics:
             </Typography>
             <Box>
-              {props.project.topics.length == 0 ? (
+              {props.project.topics.length === 0 ? (
                 <Typography>No topics found on this project</Typography>
               ) : (
                 props.project.topics.map((topicUuid) => (
