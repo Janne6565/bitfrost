@@ -231,6 +231,17 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const refreshProjectAccessSecret = useCallback(
+    async (projectTag: string) =>
+      errorHandle(async () => {
+        const response = await axiosInstance.post(
+          "/projects/" + projectTag + "/secret",
+        );
+        return response.data as string;
+      }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
@@ -250,6 +261,7 @@ const useApi = () => {
     createProject,
     approveSubscription,
     deleteSubscription,
+    refreshProjectAccessSecret,
   };
 };
 

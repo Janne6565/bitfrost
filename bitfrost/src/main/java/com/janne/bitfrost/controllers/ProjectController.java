@@ -98,4 +98,10 @@ public class ProjectController {
         projectService.revokeUserFromProject(userId, projectTag);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{projectTag}/secret")
+    public ResponseEntity<String> generateNewProjectSecret(@PathVariable String projectTag) {
+        authService.assertUserHasProjectAccess(projectTag);
+        return ResponseEntity.ok(projectService.generateNewProjectSecret(projectTag));
+    }
 }

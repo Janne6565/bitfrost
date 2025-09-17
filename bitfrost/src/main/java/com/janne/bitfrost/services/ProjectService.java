@@ -9,6 +9,7 @@ import com.janne.bitfrost.repositories.ProjectRepository;
 import com.janne.bitfrost.repositories.SubscriptionRepository;
 import com.janne.bitfrost.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,5 +151,11 @@ public class ProjectService {
         Project previousProject = Optional.of(projectRepository.getReferenceById(projectTag)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
         previousProject.setDescription(projectDto.getDescription());
         return projectRepository.save(previousProject);
+    }
+
+    public String generateNewProjectSecret(String projectTag) {
+        Project project = projectRepository.findById(projectTag).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
+        project.setProjectSecret(RandomStringUtils.randomAlphanumeric(30));
+        return projectRepository.save(project).getProjectSecret();
     }
 }
