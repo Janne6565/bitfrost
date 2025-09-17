@@ -78,7 +78,7 @@ const ProjectCreationModal = (props: {
       </FormControl>
 
       <Button
-        sx={{mt: 2}}
+        sx={{ mt: 2 }}
         disabled={!checkValidity() || isLoading}
         onClick={() => {
           setLoading(true);
