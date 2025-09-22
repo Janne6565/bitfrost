@@ -6,6 +6,7 @@ import com.janne.bitfrost.entities.Topic;
 import com.janne.bitfrost.repositories.JobRepository;
 import com.janne.bitfrost.repositories.ProjectRepository;
 import com.janne.bitfrost.repositories.SubscriptionRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -69,6 +70,7 @@ public class SubscriptionService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Access request not found"));
     }
 
+    @Transactional
     public void revokeAccessRequest(String accessRequestId) {
         Subscription subscription = getAccessRequest(accessRequestId);
         Project requestingProject = subscription.getRequestedProject();
