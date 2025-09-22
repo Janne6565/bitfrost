@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/name: bitfrost-backend
     app.kubernetes.io/instance: bitfrost-backend
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 2
   strategy:
     type: RollingUpdate
@@ -33,7 +33,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: app
-          image: janne5656/bitfrost-backend:v1.0.4
+          image: janne5656/bitfrost-backend:v1.0.9
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -42,10 +42,31 @@ spec:
             # Enable graceful shutdown at app level (align with terminationGracePeriodSeconds)
             - name: SERVER_SHUTDOWN
               value: graceful
-            - name: APP_JWT_PRIVATE-KEY-PATH
-              value: /private/private_key.pem
+            - name: POSTGRES_URL
+              value: jdbc:postgresql://postgres.db:5432/appdb
+            - name: POSTGRES_USER
+              value: ase-12
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: APP_JWT_KEYS_PUBLIC
+              value: file:/app/keys/public_key.pem
+            - name: APP_JWT_KEYS_PRIVATE
+              value: file:/app/keys/private_key.pem
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres.db:5432/appdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: ase-12
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bitfrost-postgres
+                  key: password
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bitfrost-postgres
+                  key: password
 
-          
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
@@ -79,7 +100,7 @@ spec:
 
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true # Immutable root FS → mount /tmp as writable
+            readOnlyRootFilesystem: false
             capabilities:
               drop: [ "ALL" ]
 
@@ -88,10 +109,14 @@ spec:
               mountPath: /app/data
             - name: tmp
               mountPath: /tmp
-            - mountPath: /private/private_key.pem
+            - mountPath: /app/keys/private_key.pem
               name: bitfrost-private-key
               readOnly: true
               subPath: private_key.pem
+            - mountPath: /app/keys/public_key.pem
+              name: bitfrost-private-key
+              readOnly: true
+              subPath: public_key.pem
 
       volumes:
         - name: tmp
@@ -104,4 +129,6 @@ spec:
             items:
               - key: private_key.pem
                 path: private_key.pem
+              - key: public_key.pem
+                path: public_key.pem
             secretName: bitfrost-private-key

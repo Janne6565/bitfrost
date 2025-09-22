@@ -15,6 +15,7 @@ import useApi from "@/hooks/useApi/useApi.ts";
 import { useState } from "react";
 import ApprovalModal from "@/components/ApprovalModal/ApprovalModal.tsx";
 import { enqueueSnackbar } from "notistack";
+import { API_BASE_URL } from "@/config.ts";
 
 const ProjectSetupModal = (props: {
   isOpen: boolean;
@@ -82,7 +83,7 @@ const ProjectSetupModal = (props: {
               userSelect: "all",
             }}
           >
-            POST https://bitfrost.sau-portal.de/api/v1/messages/publish/{"{"}
+            POST {API_BASE_URL}/messages/publish/{"{"}
             service-name{"}"}/{"{"}topic-name{"}"}
           </code>
           <Typography level="body-md">
@@ -100,7 +101,7 @@ const ProjectSetupModal = (props: {
             }}
           >
             POST
-            https://bitfrost.sau-portal.de/api/v1/messages/publish/MyAwesomeService/user:signup
+            {API_BASE_URL}/messages/publish/MyAwesomeService/user:signup
           </code>
           <Typography level="body-md">
             The content of the request body is the payload of the event which
