@@ -1,0 +1,24 @@
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+app:
+  cors:
+    allowed-origins:
+      - https://bitfrost.sau-portal.de
+  jwt:
+    key-id: bitfrost-key
+    issuer-uri: https://bitfrost.sau-portal.de
+    keys:
+      public: file:./app/keys/public_key.pem
+      private: file:./app/keys/private_key.pem

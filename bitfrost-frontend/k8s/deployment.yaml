@@ -7,8 +7,7 @@ metadata:
     app.kubernetes.io/name: bitfrost-frontend
     app.kubernetes.io/instance: bitfrost-frontend
 spec:
-  replicas: 2
-  revisionHistoryLimit: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -33,7 +32,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: app
-          image: janne5656/bitfrost-frontend:v1.0.6
+          image: janne5656/bitfrost-frontend:1eded74fe5ced90298b8811593316fe8d97c0509
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -73,11 +72,19 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true # Immutable root FS → mount /tmp as writable
             capabilities:
-              drop: ["ALL"]
+              drop: [ "ALL" ]
 
           volumeMounts:
-            - name: tmp
-              mountPath: /tmp
+            - mountPath: /tmp
+              name: tmp
+            - mountPath: /var/cache/nginx
+              name: cache
+            - mountPath: /run
+              name: run
       volumes:
         - name: tmp
-          emptyDir: {}
+          emptyDir: { }
+        - name: cache
+          emptyDir: { }
+        - name: run
+          emptyDir: { }

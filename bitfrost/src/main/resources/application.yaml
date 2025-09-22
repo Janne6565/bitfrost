@@ -35,8 +35,6 @@ app:
       duration: 2678400000 # 1 month
     executor:
       duration: 3600000 # 1 hour
-    secret: aa7b0e9187c3eec1bb5da2297b87c0ad6d8cb71188efea3c5b2d5bd189e5e397
-    private-key-path: private_key.pem
 management:
   endpoints:
     web:

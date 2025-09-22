@@ -11,6 +11,13 @@ spec:
     - host: bitfrost.sau-portal.de
       http:
         paths:
+          - path: /.well-known
+            pathType: Prefix
+            backend:
+              service:
+                name: bitfrost-service
+                port:
+                  number: 80
           - path: /api
             pathType: Prefix
             backend:
