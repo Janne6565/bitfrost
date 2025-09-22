@@ -9,6 +9,7 @@ import com.janne.bitfrost.repositories.ProjectRepository;
 import com.janne.bitfrost.repositories.SubscriptionRepository;
 import com.janne.bitfrost.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -114,8 +116,9 @@ public class ProjectService {
     }
 
     @Transactional
-    public void deleteProject(String id) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
+    public void deleteProject(String projectTag) {
+        log.info("Deleting project {}", projectTag);
+        Project project = projectRepository.getProjectByProjectTag(projectTag).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found"));
         project.getAssignedUsers().forEach(u -> u.getAssignedProjects().remove(project));
         userRepository.saveAll(project.getAssignedUsers());
         subscriptionRepository.findAllByRequestingProject(project).forEach(subscription -> subscriptionService.revokeAccessRequest(subscription.getUuid()));

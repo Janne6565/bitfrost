@@ -242,6 +242,15 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const deleteProject = useCallback(
+    async (projectTag: string) =>
+      errorHandle(async () => {
+        const response = await axiosInstance.delete("/projects/" + projectTag);
+        return response.status == 200;
+      }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
@@ -262,6 +271,7 @@ const useApi = () => {
     approveSubscription,
     deleteSubscription,
     refreshProjectAccessSecret,
+    deleteProject,
   };
 };
 
