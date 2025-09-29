@@ -192,7 +192,7 @@ const NavBar = () => {
                       enqueueSnackbar("No user found", { variant: "warning" });
                       return;
                     }
-                    deleteUser(userUuid ?? "").then(() => {
+                    deleteUser(userUuid).then(() => {
                       logout();
                     });
                   }
