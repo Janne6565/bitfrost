@@ -1,9 +1,21 @@
-import { Box, Divider, Typography } from "@mui/joy";
+import {
+  Box,
+  Divider,
+  Dropdown,
+  Menu,
+  MenuButton,
+  MenuItem,
+  Tooltip,
+  Typography,
+} from "@mui/joy";
 import icon from "@/assets/icon.png";
 import { matchPath, useLocation, useNavigate } from "react-router";
 import type { SxProps } from "@mui/joy/styles/types";
 import { AccountCircle } from "@mui/icons-material";
-import NotificationMenu from "@/components/NavBar/NotificationMenu/NotificationMenu.tsx";
+import useApi from "@/hooks/useApi/useApi.ts";
+import { useContext } from "react";
+import { AuthContext } from "@/components/AuthProvider/AuthProvider.tsx";
+import { enqueueSnackbar } from "notistack";
 
 const links = [
   {
@@ -103,6 +115,8 @@ const Links = () => {
 };
 
 const NavBar = () => {
+  const { deleteUser } = useApi();
+  const { userUuid, logout } = useContext(AuthContext);
   return (
     <Box
       sx={{
@@ -149,8 +163,46 @@ const NavBar = () => {
           gap: "1.5rem",
         }}
       >
-        <NotificationMenu />
-        <AccountCircle />
+        <Tooltip title={"User"}>
+          <Dropdown>
+            <MenuButton sx={{ aspectRatio: 1, padding: 0 }} variant={"plain"}>
+              <AccountCircle />
+            </MenuButton>
+            <Menu>
+              <MenuItem
+                color={"danger"}
+                onClick={() => {
+                  if (confirm("Are you sure you want to logout?")) {
+                    logout();
+                  }
+                }}
+              >
+                Logout
+              </MenuItem>
+              <MenuItem
+                color={"danger"}
+                onClick={() => {
+                  if (
+                    confirm(
+                      "Are you sure you want to delete your account? This action is irreversible!",
+                    )
+                  ) {
+                    console.log(userUuid);
+                    if (!userUuid) {
+                      enqueueSnackbar("No user found", { variant: "warning" });
+                      return;
+                    }
+                    deleteUser(userUuid ?? "").then(() => {
+                      logout();
+                    });
+                  }
+                }}
+              >
+                Delete User
+              </MenuItem>
+            </Menu>
+          </Dropdown>
+        </Tooltip>
       </Box>
     </Box>
   );

@@ -33,7 +33,7 @@ const AddUserInputField = (props: {
         enqueueSnackbar(
           <Box>
             <Typography level={"body-md"} sx={{ color: "white" }}>
-              Error while adding user
+              Error while adding userUuid
             </Typography>
             <Typography
               level={"body-sm"}
