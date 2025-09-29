@@ -187,7 +187,7 @@ const NavBar = () => {
                       "Are you sure you want to delete your account? This action is irreversible!",
                     )
                   ) {
-                    console.log(userUuid);
+                    // Removed debug logging of userUuid
                     if (!userUuid) {
                       enqueueSnackbar("No user found", { variant: "warning" });
                       return;
