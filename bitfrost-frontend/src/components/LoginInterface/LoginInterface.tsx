@@ -12,6 +12,7 @@ import {
 import { useContext, useState } from "react";
 import { AuthContext } from "@/components/AuthProvider/AuthProvider.tsx";
 import useApi from "@/hooks/useApi/useApi.ts";
+import RegisterModal from "@/components/RegisterModal/RegisterModal.tsx";
 
 const LoginInterface = () => {
   const {
@@ -23,6 +24,7 @@ const LoginInterface = () => {
     refreshIdentityToken,
     setAuthenticated,
   } = useContext(AuthContext);
+  const [isRegisterModalOpen, setRegisterModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { login } = useApi();
   const handleSubmit = async (e: React.FormEvent) => {
@@ -112,7 +114,9 @@ const LoginInterface = () => {
             }}
           >
             <Typography
-              endDecorator={<Link href="/sign-up">Sign up</Link>}
+              endDecorator={
+                <Link onClick={() => setRegisterModalOpen(true)}>Sign up</Link>
+              }
               fontSize="sm"
               sx={{ alignSelf: "center" }}
             >
@@ -126,6 +130,10 @@ const LoginInterface = () => {
           </Box>
         </form>
       </Sheet>
+      <RegisterModal
+        open={isRegisterModalOpen}
+        setOpen={setRegisterModalOpen}
+      />
     </CssVarsProvider>
   );
 };

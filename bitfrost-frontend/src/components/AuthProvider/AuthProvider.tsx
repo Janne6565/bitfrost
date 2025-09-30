@@ -6,7 +6,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import type { User } from "@/@types/backendTypes.ts";
 import useApi from "@/hooks/useApi/useApi.ts";
 import useDataLoading from "@/hooks/useDataLoading/useDataLoading.tsx";
 import LoginInterface from "@/components/LoginInterface/LoginInterface.tsx";
@@ -14,7 +13,8 @@ import LoginInterface from "@/components/LoginInterface/LoginInterface.tsx";
 interface AuthContextType {
   authenticated: boolean;
   setAuthenticated: (value: boolean) => void;
-  user: User | null;
+  userUuid: string | null;
+  setUserUuid: (userUuid: string | null) => void;
   logout: () => void;
   jwt: string | null;
   refreshIdentityToken: () => void;
@@ -29,7 +29,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   authenticated: false,
   setAuthenticated: () => {},
-  user: null,
+  userUuid: null,
+  setUserUuid: () => {},
   jwt: null,
   logout: () => {
     console.warn("Logout triggered before loaded");
@@ -43,29 +44,56 @@ const AuthContext = createContext<AuthContextType>({
   setPassword: () => {},
 });
 
+const loadUserUuidFromJwt = (jwt: string | null): string | null => {
+  if (!jwt) return null;
+
+  try {
+    const payloadBase64 = jwt.split(".")[1];
+    if (!payloadBase64) return null;
+
+    // Convert from Base64URL to Base64
+    const base64 = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
+    const decodedPayload = JSON.parse(
+      atob(base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), "=")),
+    );
+
+    return decodedPayload.sub ?? null;
+  } catch (err) {
+    console.error("Failed to parse JWT", err);
+    return null;
+  }
+};
+
 const DataLoader = () => {
   const { initialLoading } = useDataLoading();
-  const { authenticated, setIsLoading } = useContext(AuthContext);
+  const { authenticated, setIsLoading, jwt, setUserUuid } =
+    useContext(AuthContext);
 
   useEffect(() => {
     if (authenticated) {
       setIsLoading(true);
+      setUserUuid(loadUserUuidFromJwt(jwt));
       initialLoading().then(() => setIsLoading(false));
     }
-  }, [initialLoading, authenticated, setIsLoading]);
+  }, [initialLoading, authenticated, setIsLoading, jwt]);
 
   return <></>;
 };
 
 const AuthProvider = ({ children }: { children?: ReactNode }) => {
   const [authenticated, setAuthenticated] = useState(false);
-  const [user] = useState<User | null>(null);
+  const [userUuid, setUserUuid] = useState<string | null>(null);
   const [jwt, setJwt] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const logout = () => {};
-  const { fetchToken } = useApi();
+  const { fetchToken, logout: logoutApi } = useApi();
+
+  const logout = () => {
+    logoutApi().then(() => {
+      window.location.reload();
+    });
+  };
 
   const refreshIdentityToken = useCallback(async () => {
     const token = await fetchToken();
@@ -83,7 +111,8 @@ const AuthProvider = ({ children }: { children?: ReactNode }) => {
     <AuthContext.Provider
       value={{
         jwt,
-        user,
+        userUuid,
+        setUserUuid,
         authenticated,
         setAuthenticated,
         logout,

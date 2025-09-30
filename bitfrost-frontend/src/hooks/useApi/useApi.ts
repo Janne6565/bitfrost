@@ -53,13 +53,18 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const deleteUser = useCallback(
+    async (userId: string) =>
+      errorHandle(async () => {
+        return await axiosInstance.delete("/user/" + userId);
+      }),
+    [axiosInstance],
+  );
+
   const fetchToken = useCallback(
     async () =>
-      errorHandle(async () => {
-        return (
-          await axiosInstance.get("/auth/token", { withCredentials: true })
-        ).data as string;
-      }),
+      (await axiosInstance.get("/auth/token", { withCredentials: true }))
+        .data as string,
     [axiosInstance],
   );
 
@@ -251,6 +256,20 @@ const useApi = () => {
     [axiosInstance],
   );
 
+  const logout = useCallback(
+    async () =>
+      errorHandle(async () => {
+        return (
+          (
+            await axiosInstance.delete("/auth/logout", {
+              withCredentials: true,
+            })
+          ).status == 200
+        );
+      }),
+    [axiosInstance],
+  );
+
   return {
     register,
     login,
@@ -272,6 +291,8 @@ const useApi = () => {
     deleteSubscription,
     refreshProjectAccessSecret,
     deleteProject,
+    deleteUser,
+    logout,
   };
 };
 
