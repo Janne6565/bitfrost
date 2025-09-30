@@ -53,6 +53,7 @@ const ProjectTopicsModal = (props: {
                 setIsDescriptionModalOpen(true);
               }
             }}
+            sx={{ mb: "10px" }}
             endDecorator={
               <Tooltip title={"add description and submit"}>
                 <Button
@@ -98,6 +99,7 @@ const ProjectTopicsModal = (props: {
           )}
         </FormControl>
         <Button
+          sx={{ mt: "10px" }}
           disabled={
             newTopicDescription === "" ||
             newTopicName === "" ||

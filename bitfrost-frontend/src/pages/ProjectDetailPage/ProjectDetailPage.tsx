@@ -9,6 +9,8 @@ import ProjectMembersModal from "@/components/ProjectMembersModal/ProjectMembers
 import Stack from "@mui/material/Stack";
 import ProjectTopicsModal from "@/components/ProjectTopicsModal/ProjectTopicsModal.tsx";
 import ProjectSetupModal from "@/components/ProjectSetupModal/ProjectSetupModal.tsx";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DeletionModal from "@/components/DeletionModal/DeletionModal.tsx";
 
 const ButtonDesign = (props: {
   children: ReactNode;
@@ -45,6 +47,7 @@ const ProjectDetailPage = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [topicsOpen, setTopicsOpen] = useState(false);
   const [setupModalOpen, setSetupModalOpen] = useState(false);
+  const [deletionModalOpen, setDeletionModalOpen] = useState(false);
   const allProjects = useTypedSelector(
     (state) => state.ownedProjectSlice.ownedProjects,
   );
@@ -95,6 +98,13 @@ const ProjectDetailPage = () => {
           <ButtonDesign onClick={() => setSetupModalOpen((prev) => !prev)}>
             <Settings /> Setup Application
           </ButtonDesign>
+          <ButtonDesign
+            onClick={() => setDeletionModalOpen((prev) => !prev)}
+            color={"danger"}
+            sx={{ border: "red thin solid" }}
+          >
+            <DeleteIcon /> Delete Project
+          </ButtonDesign>
         </Stack>
       </Box>
       <Typography level={"h1"} sx={{ mt: 2.5, mb: 1 }}>
@@ -119,7 +129,13 @@ const ProjectDetailPage = () => {
         setOpen={setSetupModalOpen}
         project={project}
       />
+      <DeletionModal
+        isOpen={deletionModalOpen}
+        setOpen={setDeletionModalOpen}
+        project={project}
+      />
     </Box>
   );
 };
+
 export default ProjectDetailPage;

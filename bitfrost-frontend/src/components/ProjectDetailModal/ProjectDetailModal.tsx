@@ -42,7 +42,11 @@ const ProjectDetailModal = (props: {
               </Typography>
             </Box>
             <Tooltip
-              title="Subscribe to project"
+              title={
+                props.project.topics.length === 0
+                  ? "No Topics to subscribe on "
+                  : "Subscribe to project"
+              }
               placement="top"
               enterDelay={800}
             >
@@ -56,8 +60,9 @@ const ProjectDetailModal = (props: {
                   });
                 }}
                 size="lg"
-                variant="soft"
+                variant={props.project.topics.length === 0 ? "solid" : "soft"}
                 className="rainbow-button"
+                disabled={props.project.topics.length === 0}
                 sx={{ minWidth: "160px" }}
               >
                 Subscribe 🌈
