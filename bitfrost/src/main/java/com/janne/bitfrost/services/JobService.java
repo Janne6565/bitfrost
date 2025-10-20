@@ -73,4 +73,8 @@ public class JobService {
 
         jobRepository.save(job);
     }
+
+	public void deleteAllJobsForSubscriptionId(String accessRequestId) {
+			jobRepository.deleteAllBySubscriptionId(accessRequestId);
+	}
 }

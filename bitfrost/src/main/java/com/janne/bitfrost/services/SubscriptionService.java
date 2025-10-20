@@ -27,8 +27,9 @@ public class SubscriptionService {
     private final ProjectRepository projectRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final JobRepository jobRepository;
+	private final JobService jobService;
 
-    public Subscription requestAccessToProject(String requestingProjectTag, String requestedProjectTag, String label,
+	public Subscription requestAccessToProject(String requestingProjectTag, String requestedProjectTag, String label,
                                                String callbackUrl) {
         Project requestingProject = projectRepository.getReferenceById(requestingProjectTag);
         Project requestedProject = projectRepository.getReferenceById(requestedProjectTag);
@@ -76,6 +77,7 @@ public class SubscriptionService {
         Project requestingProject = subscription.getRequestedProject();
         Project requestedProject = subscription.getRequestingProject();
         Topic requestedTopic = subscription.getTopic();
+				jobService.deleteAllJobsForSubscriptionId(accessRequestId);
         requestedTopic.getSubscriptions().remove(subscription);
         requestingProject.getSubscriptions().remove(subscription);
         jobRepository.removeAllBySubscription(subscription);
